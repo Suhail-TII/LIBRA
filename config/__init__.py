@@ -1,20 +1,8 @@
-# config/__init__.py
 """
-Configuration package for experiments
+Configuration for the LIBRA experiments.
+
+    models.yaml               target model registry
+    advbench_split_v1.json    the frozen 180/340 probe/evaluation partition
+
+Both are loaded by path rather than imported, so nothing is re-exported here.
 """
-
-from .experiment_config import (
-    HARMFUL_INSTRUCTIONS,
-    TEST_MODELS,
-    EXP_CONFIG,
-    STRUCTURAL_VARIANTS,
-    LEXICAL_VARIANTS
-)
-
-__all__ = [
-    'HARMFUL_INSTRUCTIONS',
-    'TEST_MODELS',
-    'EXP_CONFIG',
-    'STRUCTURAL_VARIANTS',
-    'LEXICAL_VARIANTS'
-]

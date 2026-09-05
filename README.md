@@ -48,9 +48,17 @@ is reproduced from any external corpus.
 Every table and figure derives from the replay cache, so the analysis runs on a
 laptop in a few minutes. Nothing here generates text or contacts a model.
 
+Confirm the clone is complete before anything else:
+
 ```bash
 conda env create -f environment.yml && conda activate libra
 # or:  pip install -r requirements.txt
+
+Confirm the clone is complete before anything else:
+
+```bash
+python -c "import config, analysis, attacks, models, utils; print('ok')"
+```
 
 python verify_section4.py        # Section IV: every number, from one source
 python analyse_search_space.py   # Section IV: c*, synergy, order, interference
