@@ -1,0 +1,110 @@
+models:
+  # # Google Gemini
+  # - name: "gemini-2.5-flash"
+  #   provider: "google"
+  #   api_name: "gemini-2.5-flash"
+  #   type: "black-box"
+
+  # - name: "gemini-2.5-flash-lite"
+  #   provider: "google"
+  #   api_name: "gemini-2.5-flash-lite"
+  #   type: "black-box"
+
+  # OpenAI GPT
+  - name: "gpt-5.1"
+    provider: "openai"
+    api_name: "gpt-5"
+    type: "black-box"
+
+  - name: "gpt-5-mini"
+    provider: "openai"
+    api_name: "gpt-5-mini"
+    type: "black-box"
+
+  - name: "gpt-5-nano"
+    provider: "openai"
+    api_name: "gpt-5-nano"
+    type: "black-box"
+
+  # # Open Source GPT (via together.ai or HuggingFace)
+  # - name: "gpt-oss-120b"
+  #   provider: "HuggingFace"
+  #   api_name: "openai/gpt-oss-120b"
+  #   type: "black-box"
+
+  # # - name: "gpt-oss-20b"
+  #   provider: "HuggingFace"
+  #   api_name: "openai/gpt-oss-20b"
+  #   type: "black-box"
+
+  # # DeepSeek
+  # - name: "deepseek-r1"
+  #   provider: "HuggingFace"
+  #   api_name: "deepseek-ai/DeepSeek-R1"
+  #   type: "black-box"
+
+  # # - name: "deepseek-v3.2-exp"
+  #   provider: "HuggingFace"
+  #   api_name: "deepseek-ai/DeepSeek-V3.2-Exp"
+  #   type: "black-box"
+
+
+  # Qwen
+  # - name: "qwen3-guard-gen-4b"
+  #   provider: "HuggingFace"
+  #   api_name: "Qwen/Qwen3Guard-Gen-4B"
+  #   type: "black-box"
+
+  - name: "Qwen3-14B"
+    provider: "HuggingFace"
+    api_name: "Qwen/Qwen3-14B"
+    type: "white-box"
+
+  # Mistral
+  # - name: "mistral-large-2411"
+  #   provider: "HuggingFace"
+  #   api_name: "mistralai/Mistral-Large-Instruct-2411"
+  #   type: "black-box"
+
+  # # - name: "mistral-small-3.2-24b-instruct"
+  #   provider: "HuggingFace"
+  #   api_name: "mistralai/Mistral-Small-3.2-24B-Instruct-2506"
+  #   type: "black-box"
+
+  # - name: Mistral-7B-Instruct-v0.3
+  # provider: HuggingFace
+  # api_name: mistralai/Mistral-7B-Instruct-v0.3
+  # type: black-box
+
+  # Llama 3
+  - name: "Llama-2-7B-Chat"
+    provider: "HuggingFace"
+    api_name: "meta-llama/Llama-2-7b-chat-hf"
+    type: "black-box"
+
+  - name: "Llama-3.1-8B-Instruct"
+    provider: "HuggingFace"
+    api_name: "meta-llama/Llama-3.1-8B-Instruct"
+    type: "black-box"
+
+  # Grok
+  # - name: "grok-4"
+  #   provider: "xai"
+  #   api_name: "grok-4-0709"
+  #   type: "black-box"
+
+  # - name: "grok-4-fast"
+  #   provider: "xai"
+  #   api_name: "grok-4-fast-reasoning"
+  #   type: "black-box"
+
+  # # Gemma 4
+  # - name: "Gemma-4-12B-it"
+  #   provider: "HuggingFace"
+  #   api_name: "google/gemma-4-12B-it"
+  #   type: "black-box"
+
+  - name: "Ministral-3-8B-Instruct"
+    provider: "HuggingFace"
+    api_name: "mistralai/Ministral-3-8B-Instruct-2512"
+    type: "black-box"

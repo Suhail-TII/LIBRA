@@ -1,0 +1,12 @@
+__pycache__/
+*.pyc
+.env
+logs/
+results/stage_a/
+results/stage_a_raw/
+results/stage_a_templates/
+results/stage_a_batch/
+results/stage_a_decoded/
+results/stage_b/
+results/stage_b_decoded/
+results/stage_a_cap2048/
