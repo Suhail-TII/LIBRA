@@ -56,9 +56,8 @@ conda env create -f environment.yml && conda activate libra
 
 Confirm the clone is complete before anything else:
 
-```bash
 python -c "import config, analysis, attacks, models, utils; print('ok')"
-```
+
 
 python verify_section4.py        # Section IV: every number, from one source
 python analyse_search_space.py   # Section IV: c*, synergy, order, interference
