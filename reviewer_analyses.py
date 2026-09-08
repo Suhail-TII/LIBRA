@@ -112,7 +112,7 @@ def bl_ucb(replay: Replay, hp: Hyper, budget: int,
     return cfgs[int(np.argmax(mean))], replay.n_queries
 
 
-def run_baselines(df, budgets, seeds, hp):
+def run_baselines(df, budgets, seeds, hp, seeds_out="results/regret_seeds.csv"):
     methods = {
         "LIBRA":         select,
         "singles_sweep": bl_singles_sweep,
@@ -120,7 +120,7 @@ def run_baselines(df, budgets, seeds, hp):
         "race_only":     bl_race_only,
         "random":        bl_random,
     }
-    rows = []
+    rows, per_seed = [], []
     for target in POOL:
         rp = Replay(df, target)
         _, star = rp.optimum()
@@ -130,17 +130,22 @@ def run_baselines(df, budgets, seeds, hp):
                 for s in range(seeds):
                     rng = np.random.default_rng(10_000 * b + s)
                     pick, _ = fn(rp, hp, b, rng)
-                    regs.append(star - rp.true_asr(pick))
+                    reg = star - rp.true_asr(pick)
+                    regs.append(reg)
+                    per_seed.append(dict(model=target, method=name,
+                                         budget=b, seed=s, regret=reg))
                 rows.append(dict(model=target, method=name, budget=b,
                                  regret=float(np.mean(regs))))
     r = pd.DataFrame(rows)
-
+    pd.DataFrame(per_seed).to_csv(seeds_out, index=False)
+    print(f"  per-seed regret -> {seeds_out}")
+ 
     print("=" * 74)
     print("#5  MEAN REGRET (points) INCLUDING THE TWO NEW BASELINES")
     print("=" * 74)
     print((r.pivot_table(index="budget", columns="method",
                          values="regret") * 100).round(2).to_string())
-
+ 
     b = max(budgets)
     print(f"\nper target at budget {b}:")
     print((r[r.budget == b].pivot_table(index="model", columns="method",

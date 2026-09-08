@@ -1,0 +1,89 @@
+{
+  "note": "Pre-generation rejections by the API provider's content filter. Request bodies and identifiers are omitted; only the rejection codes are released.",
+  "n_bio_policy": 13,
+  "n_credit_exhausted": 1689,
+  "permanently_excluded_instructions": [
+    51,
+    337
+  ],
+  "records": [
+    {
+      "shard": "0",
+      "custom_id": "r17",
+      "status_code": 400,
+      "code": "bio_policy"
+    },
+    {
+      "shard": "0",
+      "custom_id": "r375",
+      "status_code": 400,
+      "code": "bio_policy"
+    },
+    {
+      "shard": "0",
+      "custom_id": "r733",
+      "status_code": 400,
+      "code": "bio_policy"
+    },
+    {
+      "shard": "0",
+      "custom_id": "r1807",
+      "status_code": 400,
+      "code": "bio_policy"
+    },
+    {
+      "shard": "0",
+      "custom_id": "r2165",
+      "status_code": 400,
+      "code": "bio_policy"
+    },
+    {
+      "shard": "0",
+      "custom_id": "r2344",
+      "status_code": 400,
+      "code": "bio_policy"
+    },
+    {
+      "shard": "1",
+      "custom_id": "r4313",
+      "status_code": 400,
+      "code": "bio_policy"
+    },
+    {
+      "shard": "1",
+      "custom_id": "r4671",
+      "status_code": 400,
+      "code": "bio_policy"
+    },
+    {
+      "shard": "3",
+      "custom_id": "r8072",
+      "status_code": 400,
+      "code": "bio_policy"
+    },
+    {
+      "shard": "4",
+      "custom_id": "r11473",
+      "status_code": 400,
+      "code": "bio_policy"
+    },
+    {
+      "shard": "4",
+      "custom_id": "r12010",
+      "status_code": 400,
+      "code": "bio_policy"
+    },
+    {
+      "shard": "5",
+      "custom_id": "r12547",
+      "status_code": 400,
+      "code": "bio_policy"
+    },
+    {
+      "shard": "5",
+      "custom_id": "r13263",
+      "status_code": 400,
+      "code": "bio_policy"
+    }
+  ]
+}

@@ -29,6 +29,7 @@ import numpy as np
 import pandas as pd
 from matplotlib.colors import LinearSegmentedColormap
 from matplotlib.ticker import NullFormatter, NullLocator
+from matplotlib.patches import Patch
 
 POOL = ["Llama-2-7B-Chat", "Llama-3.1-8B-Instruct", "Qwen3-14B",
         "gpt-5.1", "Ministral-3-8B-Instruct"]
@@ -64,16 +65,33 @@ plt.rcParams.update({
 # FIGURE 1 — regret vs budget
 # ═══════════════════════════════════════════════════════════════════════════
 
-def fig_regret(results_csv: str, outdir: Path):
+def fig_regret(results_csv: str, outdir: Path, seeds_csv: str | None = None):
     """
-    One panel, log-x. Methods are ordered in the legend by their regret at the
-    largest budget so the legend reads top-to-bottom in the same order the
-    curves finish, which removes the need to trace lines back.
+    One panel, log-x, with shaded interquartile ranges where per-seed values
+    are available.
+ 
+    The band is the 25th-75th percentile over seeds, pooled across the five
+    targets. It is deliberately not a confidence interval on the mean: the
+    quantity a reader cares about is how much an individual run varies, since
+    an adversary gets one run, not two hundred.
     """
     r = pd.read_csv(results_csv)
-    piv = r.pivot_table(index="budget", columns="method",
-                        values="regret") * 100
-
+    piv = r.pivot_table(index="budget", columns="method", values="regret") * 100
+ 
+    bands = None
+    if seeds_csv and Path(seeds_csv).exists():
+        s = pd.read_csv(seeds_csv)
+        # Average across targets WITHIN each seed first. Pooling (target, seed)
+        # pairs would show between-target spread, which is large because the
+        # targets have ceilings from 23.6% to 90.6%, and says nothing about
+        # whether the difference between methods is real.
+        per_seed = (s.groupby(["method", "budget", "seed"]).regret
+                     .mean().reset_index())
+        g = per_seed.groupby(["method", "budget"]).regret
+        m, sd, n = g.mean() * 100, g.std() * 100, g.count()
+        half = 1.96 * sd / np.sqrt(n)
+        bands = pd.DataFrame({0.25: m - half, 0.75: m + half})
+ 
     style = {
         "LIBRA":         dict(color="#1f5c3d", marker="o", lw=2.0, zorder=5),
         "singles_sweep": dict(color="#8c2f1f", marker="s", ls="--"),
@@ -84,20 +102,25 @@ def fig_regret(results_csv: str, outdir: Path):
     label = {"LIBRA": "LIBRA", "singles_sweep": "Singles sweep",
              "ucb": "UCB1", "random": "Random search",
              "race_only": "Race, no screening"}
-
-    fig, ax = plt.subplots(figsize=(3.5, 2.6))
-
+ 
+    fig, ax = plt.subplots(figsize=(3.5, 2.9))
+ 
     order = piv.iloc[-1].sort_values().index
     for m in order:
         if m not in style:
             continue
+        # band first so the line sits on top of it
+        if bands is not None and m in bands.index.get_level_values(0):
+            b = bands.loc[m]
+            ax.fill_between(b.index, b[0.25], b[0.75],
+                            color=style[m]["color"], alpha=0.13, lw=0, zorder=2)
         ax.plot(piv.index, piv[m], label=label[m], **style[m])
-
-    # transfer: flat reference line, no queries spent
-    ax.axhline(32.6, color="#b0b0b0", lw=0.9, ls="-", zorder=1)
-    ax.text(piv.index[0], 31.6, "Transfer (0 queries)", ha="left",
-        va="top", fontsize=6.5, color="#707070")
-
+ 
+    ax.axhline(32.6, color="#b0b0b0", lw=0.9, zorder=1)
+    ax.text(piv.index[0], 31.6, "Transfer (0 queries)", ha="left", va="top",
+            fontsize=6.5, color="#707070")
+ 
+    from matplotlib.ticker import NullFormatter, NullLocator
     ax.set_xscale("log")
     ax.xaxis.set_minor_locator(NullLocator())
     ax.xaxis.set_minor_formatter(NullFormatter())
@@ -108,16 +131,16 @@ def fig_regret(results_csv: str, outdir: Path):
     ax.set_ylim(0, 37)
     ax.grid(alpha=0.25, lw=0.4)
     ax.legend(frameon=False, ncol=3, handlelength=1.8, columnspacing=1.2,
-            loc="upper center", bbox_to_anchor=(0.5, -0.18))
-    fig.set_size_inches(3.5, 2.9)
-    for s in ("top", "right"):
-        ax.spines[s].set_visible(False)
-
+              loc="upper center", bbox_to_anchor=(0.5, -0.18))
+    for sp in ("top", "right"):
+        ax.spines[sp].set_visible(False)
+ 
     out = outdir / "fig_regret.pdf"
     fig.savefig(out)
     fig.savefig(out.with_suffix(".png"))
     plt.close(fig)
-    print(f"  {out}")
+    print(f"  {out}" + ("  (with IQR bands)" if bands is not None else
+                        "  (no per-seed file -- lines only)"))
 
 
 # ═══════════════════════════════════════════════════════════════════════════
@@ -156,6 +179,13 @@ def fig_heatmap(cache: str, outdir: Path):
     axl.set_xticks([]); axl.set_yticks([])
     for s in axl.spines.values():
         s.set_linewidth(0.4)
+    
+    axl.legend(handles=[Patch(facecolor="#c08a5a", label="single"),
+                        Patch(facecolor="#e8eef6", ec="#b0b0b0", lw=0.4,
+                              label="composed")],
+               loc="lower right", bbox_to_anchor=(0.5, -0.05),
+               frameon=False, fontsize=6, handlelength=0.9,
+               handleheight=0.9, labelspacing=0.3, borderpad=0)
     axl.set_ylabel("103 configurations, ordered by mean ASR", fontsize=7.5)
 
     im = ax.imshow(a.values, aspect="auto", cmap=cmap, vmin=0, vmax=100)
@@ -200,13 +230,14 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--cache", default="results/replay_cache.parquet")
     ap.add_argument("--results", default="results/reviewer_analyses.csv")
+    ap.add_argument("--seeds-csv", default="results/regret_seeds.csv")
     ap.add_argument("--outdir", default="figures")
     args = ap.parse_args()
 
     out = Path(args.outdir)
     out.mkdir(parents=True, exist_ok=True)
     print("writing:")
-    fig_regret(args.results, out)
+    fig_regret(args.results, out, args.seeds_csv)
     fig_heatmap(args.cache, out)
 
 

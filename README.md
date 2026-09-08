@@ -17,6 +17,12 @@ This repository contains everything needed to reproduce both.
 **Released.** `results/replay_cache.parquet` is the measurement. It holds one
 row per (model, configuration, instruction) with a boolean outcome:
 
+`results/provider_filter_rejections.json` records the provider-side content
+filter rejections discussed in Section IV-D: 13 biological-risk blocks, two of
+which fall on instructions rejected under every configuration and are therefore
+excluded from the API-served targets. Request bodies and provider request IDs
+are omitted.
+
 | model | config | instruction_id | success | kind |
 |---|---|---|---|---|
 | Llama-3.1-8B-Instruct | `plinius_format_hijack` | 42 | True | framing_only |
