@@ -120,7 +120,6 @@ def fig_regret(results_csv: str, outdir: Path, seeds_csv: str | None = None):
     ax.text(piv.index[0], 31.6, "Transfer (0 queries)", ha="left", va="top",
             fontsize=6.5, color="#707070")
  
-    from matplotlib.ticker import NullFormatter, NullLocator
     ax.set_xscale("log")
     ax.xaxis.set_minor_locator(NullLocator())
     ax.xaxis.set_minor_formatter(NullFormatter())

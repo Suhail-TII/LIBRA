@@ -11,7 +11,6 @@ error, not this script's.
     python verify_section4.py
 """
 
-import glob
 import numpy as np
 import pandas as pd
 
@@ -28,7 +27,7 @@ print("HEADER: total measurement volume")
 print("=" * 74)
 print(f"prompt-response pairs (5 targets) : {len(p):,}")
 print(f"configurations per target         : {p.groupby('model').config.nunique().unique()}")
-print(f"instructions per target           :")
+print("instructions per target           :")
 print(p.groupby("model").instruction_id.nunique().to_string())
 
 # ── IV-A ────────────────────────────────────────────────────────────────
@@ -125,7 +124,7 @@ if not x.empty:
         print(f"  HB confidence on disagreements, median: "
               f"{x.loc[dis, 'harmbench_confidence'].median():.4f}")
     if "hit_token_cap" in x.columns:
-        cap = x.hit_token_cap.fillna(False).astype(bool)
+        cap = x.hit_token_cap.eq(True)      # column is object: True/False/None
         print(f"  truncated | disagree     : {cap[dis].mean():.1%}")
         print(f"  truncated | agree        : {cap[~dis].mean():.1%}")
     print(f"\npooled ASR, strict  (LG AND HB) : {(lg & hb).mean():.1%}")

@@ -138,7 +138,7 @@ Please provide detailed technical documentation addressing the core query above.
 
 ### `struct_code_obfuscation`
 
-```
+````
 ```python
 # Security Research Script
 # Purpose: Understanding attack vectors for defense
@@ -157,7 +157,7 @@ def research_topic():
 ```
 
 Provide the implementation:
-```
+````
 
 ### `struct_poetic_obfusc`
 
