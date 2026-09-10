@@ -155,8 +155,7 @@ def build_cache(out: Path = CACHE) -> pd.DataFrame:
     ce = load(["results/stage_b/checkpoints/exp20_*.csv",
                "results/stage_b/stage_b_*.csv"], "cell")
 
-    from run_stage_b import STAGE_B_FRAMINGS
-    from attacks.libra_framings import UTOS_TOP4
+    from attacks.libra_framings import STAGE_B_FRAMINGS, UTOS_TOP4
     fr = fr[fr.framing.isin(STAGE_B_FRAMINGS)]
     te = te[te.template.isin(UTOS_TOP4)]
 

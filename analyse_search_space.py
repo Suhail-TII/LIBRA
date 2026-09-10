@@ -46,7 +46,6 @@ import argparse
 import glob
 from pathlib import Path
 
-import numpy as np
 import pandas as pd
 
 
@@ -167,10 +166,18 @@ def build_space(metric: str, use_decoded: bool = True) -> pd.DataFrame:
     # Stage A screened 43 and Stage A-T screened 12, so restrict the
     # single-component configurations to the ones actually in the design space
     # -- otherwise c* could be a framing the algorithm can never propose.
-    from run_stage_b import STAGE_B_FRAMINGS
-    from attacks.libra_framings import UTOS_TOP4
-    fr = fr[fr.framing.isin(STAGE_B_FRAMINGS)]
-    te = te[te.template.isin(UTOS_TOP4)]
+    from attacks.libra_framings import STAGE_B_FRAMINGS, UTOS_TOP4
+    if fr.empty and te.empty and ce.empty:
+        raise SystemExit(
+            "no raw stage CSVs found under results/stage_a*, results/stage_b.\n"
+            "This script rebuilds results/search_space.csv from the raw "
+            "generations, which are NOT released (see README). The committed "
+            "search_space.csv is its output; verify_section4.py and "
+            "libra_select.py reproduce the paper from the released caches.")
+    if not fr.empty:
+        fr = fr[fr.framing.isin(STAGE_B_FRAMINGS)]
+    if not te.empty:
+        te = te[te.template.isin(UTOS_TOP4)]
 
     # AdvBench ids 337 and 51 are permanently rejected by the GPT
     # pre-generation filter (HTTP 400, "possible biological risk"). Some cells

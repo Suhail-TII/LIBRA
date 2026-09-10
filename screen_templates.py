@@ -73,7 +73,7 @@ def git_commit() -> Optional[str]:
 
 def load_model_by_name(name: str, config_path: Path):
     import yaml
-    from master_experiment import load_model_from_config
+    from models.loader import load_model_from_config
     with open(config_path) as f:
         models = yaml.safe_load(f)["models"]
     match = [m for m in models if m["name"] == name]

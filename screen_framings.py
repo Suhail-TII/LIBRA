@@ -38,7 +38,6 @@ import argparse
 import json
 import subprocess
 import sys
-import traceback
 from datetime import datetime
 from pathlib import Path
 from typing import Dict, List, Optional
@@ -104,7 +103,7 @@ def git_commit() -> Optional[str]:
 def load_model_by_name(name: str, config_path: Path):
     """Resolve a model by its `name` in models.yaml and load it."""
     import yaml
-    from master_experiment import load_model_from_config
+    from models.loader import load_model_from_config
 
     with open(config_path) as f:
         models = yaml.safe_load(f)["models"]

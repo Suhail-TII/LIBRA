@@ -276,7 +276,7 @@ def bootstrap(df, n_boot):
 
     # --- transfer cost -------------------------------------------------
     print("\nTRANSFER COST")
-    per_model_star, per_model_peers = {}, {}
+    per_model_star = {}
     for m in POOL:
         g = wide.loc[m]
         per_model_star[m] = g.mean().idxmax()

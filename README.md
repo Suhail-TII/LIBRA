@@ -54,29 +54,32 @@ is reproduced from any external corpus.
 Every table and figure derives from the replay cache, so the analysis runs on a
 laptop in a few minutes. Nothing here generates text or contacts a model.
 
-Confirm the clone is complete before anything else:
-
 ```bash
 conda env create -f environment.yml && conda activate libra
 # or:  pip install -r requirements.txt
 
-Confirm the clone is complete before anything else:
-
+# confirm the clone is complete and the light import path is intact
 python -c "import config, analysis, attacks, models, utils; print('ok')"
 
-
 python verify_section4.py        # Section IV: every number, from one source
-python analyse_search_space.py   # Section IV: c*, synergy, order, interference
 python libra_select.py --lomo --budgets 120,240,360,480,720,960 --seeds 200
 python reviewer_analyses.py --boot 2000 --seeds 200
+python make_figures.py           # both paper figures, into figures/
 ```
+
+The analysis scripts import only pandas and numpy, not torch, so this runs on
+a laptop with `pip install -r requirements.txt` and no GPU stack.
 
 | script | produces |
 |---|---|
 | `verify_section4.py` | Tables 2–4; transfer cost, synergy, order, evaluator |
-| `analyse_search_space.py` | the 103-configuration space, `results/search_space.csv` |
 | `libra_select.py` | Table 5, Table 6; the search procedure and its baselines |
 | `reviewer_analyses.py` | the singles/UCB baselines, additive diagnostics, bootstrap CIs |
+| `make_figures.py` | `figures/fig_regret.pdf`, `figures/fig_heatmap.pdf` |
+
+`analyse_search_space.py` rebuilds `results/search_space.csv` from the raw
+stage CSVs, which are not released (see below); the committed
+`search_space.csv` is its output.
 
 `libra_select.py` replays the grid: the procedure may query only
 (configuration, instruction) pairs that were actually measured, and receives
@@ -136,7 +139,7 @@ rank. Both selections are made on the probe half only.
 ### 3. Measure the composition grid (Stage B)
 
 ```bash
-bash slurm/submit_chained.sh --array 0,1,5 --segments 3 --script slurm/stage_b.sh
+bash slurm/submit_stage_a.sh --array 0,1,5 --segments 3 --script slurm/stage_b.sh
 python batch_stage_a.py submit --model gpt-5.1 --axis cells
 sbatch slurm/judge_cells.sh
 ```

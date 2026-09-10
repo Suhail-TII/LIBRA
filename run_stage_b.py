@@ -60,30 +60,12 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 from attacks.framing_registry import CANDIDATES, VOCABULARY
 from attacks.libra_framings import (
-    UTOS_TEMPLATES, UTOS_CATEGORIES, UTOS_TOP4,
+    UTOS_TEMPLATES, UTOS_CATEGORIES, UTOS_TOP4, STAGE_B_FRAMINGS,
     COMPOSITION_ORDERS, ORDER_FRAMING_OUTER, ORDER_TEMPLATE_OUTER,
     prompt_hash,
 )
 from analysis.metrics import EnsembleEvaluator, EvalLabel, StructuralMetrics
 from utils.checkpoint import CheckpointManager
-
-
-# Union of top-3 framings per model, computed on Stage A probe data. Fixed
-# here rather than recomputed at runtime: the grid must not change if the
-# Stage A CSVs are ever re-judged or extended.
-STAGE_B_FRAMINGS: List[str] = [
-    "clean_openai",
-    "libra_semantic_inv",
-    "libra_style",
-    "plinius_format_hijack",
-    "plinius_full_openai",
-    "plinius_l33tspeak",
-    "plinius_persona",
-    "struct_attention_frag",
-    "struct_code_obfuscation",
-    "struct_poetic_obfusc",
-    "struct_refusal_suppress",
-]
 
 
 def compose_cell(framing: str, template: str, instruction: str, order: str) -> str:
@@ -133,7 +115,7 @@ def git_commit() -> Optional[str]:
 
 def load_model_by_name(name: str, config_path: Path):
     import yaml
-    from master_experiment import load_model_from_config
+    from models.loader import load_model_from_config
     models = yaml.safe_load(Path(config_path).read_text())["models"]
     match = [m for m in models if m["name"] == name]
     if not match:

@@ -46,10 +46,9 @@ import argparse
 import json
 import subprocess
 import sys
-import time
 from datetime import datetime
 from pathlib import Path
-from typing import Dict, List
+from typing import Dict
 
 import pandas as pd
 from tqdm import tqdm
@@ -375,7 +374,6 @@ def phase_fetch(args):
         return
     safe = m["model"].replace(".", "_").replace("-", "_")
     tag = "" if m.get("axis", "framings") == "framings" else f"{m['axis']}_"
-    safe = m["model"].replace(".", "_").replace("-", "_")
     out = OUT_DIR / f"gen_{tag}{safe}.csv"
     df.to_csv(out, index=False)
 
