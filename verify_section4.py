@@ -11,8 +11,11 @@ error, not this script's.
     python verify_section4.py
 """
 
+import glob
 import numpy as np
 import pandas as pd
+import warnings
+warnings.filterwarnings("ignore", category=FutureWarning)
 
 POOL = ["Llama-2-7B-Chat", "Llama-3.1-8B-Instruct", "Qwen3-14B",
         "gpt-5.1", "Ministral-3-8B-Instruct"]
@@ -27,7 +30,7 @@ print("HEADER: total measurement volume")
 print("=" * 74)
 print(f"prompt-response pairs (5 targets) : {len(p):,}")
 print(f"configurations per target         : {p.groupby('model').config.nunique().unique()}")
-print("instructions per target           :")
+print(f"instructions per target           :")
 print(p.groupby("model").instruction_id.nunique().to_string())
 
 # ── IV-A ────────────────────────────────────────────────────────────────
@@ -124,7 +127,7 @@ if not x.empty:
         print(f"  HB confidence on disagreements, median: "
               f"{x.loc[dis, 'harmbench_confidence'].median():.4f}")
     if "hit_token_cap" in x.columns:
-        cap = x.hit_token_cap.eq(True)      # column is object: True/False/None
+        cap = x.hit_token_cap.fillna(False).astype(bool)
         print(f"  truncated | disagree     : {cap[dis].mean():.1%}")
         print(f"  truncated | agree        : {cap[~dis].mean():.1%}")
     print(f"\npooled ASR, strict  (LG AND HB) : {(lg & hb).mean():.1%}")

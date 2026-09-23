@@ -1,0 +1,28 @@
+{
+  "held_out": "Qwen3-14B",
+  "cells": [
+    "clean_openai|data_dictionary|libra_then_utos",
+    "clean_openai|json|libra_then_utos",
+    "libra_semantic_inv|html_table|libra_then_utos",
+    "libra_semantic_inv|json|utos_then_libra",
+    "libra_style|data_dictionary|libra_then_utos",
+    "libra_style|latex_table|utos_then_libra",
+    "plinius_format_hijack|data_dictionary|libra_then_utos",
+    "plinius_format_hijack|json|utos_then_libra",
+    "plinius_full_openai|data_dictionary|libra_then_utos",
+    "plinius_full_openai|latex_table|utos_then_libra",
+    "plinius_l33tspeak|data_dictionary|utos_then_libra",
+    "plinius_l33tspeak|html_table|libra_then_utos",
+    "plinius_persona|json|utos_then_libra",
+    "plinius_persona|latex_table|utos_then_libra",
+    "struct_attention_frag|data_dictionary|libra_then_utos",
+    "struct_attention_frag|latex_table|utos_then_libra",
+    "struct_code_obfuscation|html_table|libra_then_utos",
+    "struct_code_obfuscation|latex_table|utos_then_libra",
+    "struct_poetic_obfusc|html_table|utos_then_libra",
+    "struct_poetic_obfusc|latex_table|libra_then_utos",
+    "struct_refusal_suppress|json|utos_then_libra",
+    "struct_refusal_suppress|latex_table|libra_then_utos"
+  ],
+  "train_regret": 4.653349979192676
+}

@@ -155,7 +155,8 @@ def build_cache(out: Path = CACHE) -> pd.DataFrame:
     ce = load(["results/stage_b/checkpoints/exp20_*.csv",
                "results/stage_b/stage_b_*.csv"], "cell")
 
-    from attacks.libra_framings import STAGE_B_FRAMINGS, UTOS_TOP4
+    from run_stage_b import STAGE_B_FRAMINGS
+    from attacks.libra_framings import UTOS_TOP4
     fr = fr[fr.framing.isin(STAGE_B_FRAMINGS)]
     te = te[te.template.isin(UTOS_TOP4)]
 
@@ -249,46 +250,97 @@ class Hyper:
     screen_frac: float = 0.7  # share of budget spent on screening
 
 
-def screen_sets(configs: Sequence[str], k: int,
-                rng: np.random.Generator) -> Tuple[List[str], List[str]]:
+# def screen_sets(configs: Sequence[str], k: int,
+#                 rng: np.random.Generator) -> Tuple[List[str], List[str]]:
+#     """
+#     Returns (composed cells for main-effect estimation, all single components).
+
+#     Balance governs the composed subset: if `json` only ever appeared alongside
+#     weak framings it would look weak when it is not, so the design lets the
+#     other factors cancel when averaging. 11 framings and 4 templates share no
+#     common factor, so exact balance on both axes would need 44 cells -- half the
+#     grid. At k=22 each framing appears twice and each order 11 times, while
+#     templates appear 5 or 6 times, so the template axis is only near-balanced.
+#     """
+#     cells = [c for c in configs if c.count("|") == 2]
+#     singles = [c for c in configs if c.count("|") == 0]
+
+#     by_framing: Dict[str, List[str]] = {}
+#     for c in cells:
+#         by_framing.setdefault(c.split("|")[0], []).append(c)
+
+#     per = max(1, k // max(len(by_framing), 1))
+#     picked: List[str] = []
+#     for f in sorted(by_framing):
+#         g = sorted(by_framing[f])
+#         rng.shuffle(g)
+#         picked.extend(g[:per])
+#     if len(picked) < k:
+#         rest = [c for c in cells if c not in set(picked)]
+#         rng.shuffle(rest)
+#         picked.extend(rest[: k - len(picked)])
+#     return picked[:k], singles
+
+# The screening subset is FIXED, not drawn. A randomly drawn balanced subset
+# ranks the framings differently from run to run (between-draw Spearman
+# correlation 0.32-0.61 across targets), so the procedure's intermediate
+# estimates would depend on the seed. This subset is selected once, offline, as
+# the balanced subset minimising pairwise co-occurrence imbalance across the
+# three axes; five independent searches converge to the same score (1.4330), so
+# it is optimal at that objective rather than the best of a lucky set of trials.
+# Each framing appears twice with two distinct templates, each order eleven
+# times, and templates six, six, five and five -- the closest to full balance
+# that 22 cells permit, since exact balance on an 11-framing and a 4-template
+# axis would require 44.
+SCREEN_DESIGN = [
+    "clean_openai|html_table|libra_then_utos",
+    "clean_openai|json|utos_then_libra",
+    "libra_semantic_inv|data_dictionary|utos_then_libra",
+    "libra_semantic_inv|latex_table|utos_then_libra",
+    "libra_style|json|utos_then_libra",
+    "libra_style|latex_table|utos_then_libra",
+    "plinius_format_hijack|data_dictionary|utos_then_libra",
+    "plinius_format_hijack|html_table|libra_then_utos",
+    "plinius_full_openai|data_dictionary|libra_then_utos",
+    "plinius_full_openai|latex_table|utos_then_libra",
+    "plinius_l33tspeak|data_dictionary|libra_then_utos",
+    "plinius_l33tspeak|html_table|libra_then_utos",
+    "plinius_persona|json|libra_then_utos",
+    "plinius_persona|latex_table|libra_then_utos",
+    "struct_attention_frag|data_dictionary|libra_then_utos",
+    "struct_attention_frag|json|utos_then_libra",
+    "struct_code_obfuscation|data_dictionary|utos_then_libra",
+    "struct_code_obfuscation|latex_table|libra_then_utos",
+    "struct_poetic_obfusc|html_table|utos_then_libra",
+    "struct_poetic_obfusc|latex_table|libra_then_utos",
+    "struct_refusal_suppress|html_table|utos_then_libra",
+    "struct_refusal_suppress|json|libra_then_utos",
+]
+
+
+def screen_sets(configs, k=None, rng=None):
     """
-    Returns (composed cells for main-effect estimation, all single components).
+    Returns (the fixed screening subset, all single components).
 
-    Balance governs the composed subset: if `json` only ever appeared alongside
-    weak framings it would look weak when it is not, so the design lets the
-    other factors cancel when averaging. 11 framings and 4 templates share no
-    common factor, so exact balance on both axes would need 44 cells -- half the
-    grid. At k=22 each framing appears twice and each order 11 times, while
-    templates appear 5 or 6 times, so the template axis is only near-balanced.
+    k and rng are accepted for call-site compatibility and ignored: the subset
+    is fixed. k is honoured only by the sensitivity sweep, which truncates the
+    design to compare screening sizes.
     """
-    cells = [c for c in configs if c.count("|") == 2]
-    singles = [c for c in configs if c.count("|") == 0]
-
-    by_framing: Dict[str, List[str]] = {}
-    for c in cells:
-        by_framing.setdefault(c.split("|")[0], []).append(c)
-
-    per = max(1, k // max(len(by_framing), 1))
-    picked: List[str] = []
-    for f in sorted(by_framing):
-        g = sorted(by_framing[f])
-        rng.shuffle(g)
-        picked.extend(g[:per])
-    if len(picked) < k:
-        rest = [c for c in cells if c not in set(picked)]
-        rng.shuffle(rest)
-        picked.extend(rest[: k - len(picked)])
-    return picked[:k], singles
+    cells = [c for c in SCREEN_DESIGN if c in set(configs)]
+    singles = [c for c in configs if "|" not in c]
+    return (cells[:k] if k else cells), singles
 
 
 def main_effects(replay: Replay, cells: Sequence[str], singles: Sequence[str],
-                 instructions: Sequence[int]) -> Tuple[Dict[str, float], Dict[str, float]]:
+                 instructions: Sequence[int]
+                 ) -> Tuple[Dict[str, float], Dict[str, float], Dict[str, float]]:
     """
-    Returns (ingredient effects, direct single-component observations).
+    Returns (ingredient effects, direct single-component observations,
+    observed values for the probed composed cells).
 
-    Singles are EXCLUDED from the grand mean and the axis averages: mixing
-    composed and uncomposed prompts into one baseline is what put the two on
-    different scales and pushed the framing-only optimum off the shortlist.
+    The third is returned rather than discarded because a probed cell has been
+    measured: scoring it additively throws away the measurement the budget
+    already paid for.
     """
     obs = {c: replay.batch(c, instructions) for c in cells}
     grand = float(np.mean(list(obs.values()))) if obs else 0.0
@@ -302,19 +354,33 @@ def main_effects(replay: Replay, cells: Sequence[str], singles: Sequence[str],
             eff[level] = float(np.mean(vs)) - grand
 
     direct = {c: replay.batch(c, instructions) for c in singles}
-    return eff, direct
+    return eff, direct, obs
 
 
-def predict(config: str, eff: Dict[str, float], direct: Dict[str, float]) -> float:
-    """Direct observation where one exists, additive prediction otherwise."""
+# def predict(config: str, eff: Dict[str, float], direct: Dict[str, float]) -> float:
+#     """Direct observation where one exists, additive prediction otherwise."""
+#     if config in direct:
+#         return direct[config]
+#     return eff.get("__grand__", 0.0) + sum(eff.get(p, 0.0) for p in config.split("|"))
+
+def predict(config, eff, direct, observed=None):
+    """Measured value where one exists, additive prediction otherwise."""
     if config in direct:
         return direct[config]
+    if observed and config in observed:
+        return observed[config]
     return eff.get("__grand__", 0.0) + sum(eff.get(p, 0.0) for p in config.split("|"))
 
 
 def select(replay: Replay, hp: Hyper, budget: int,
-           rng: np.random.Generator, **_) -> Tuple[str, int]:
-    """One run of LIBRA. Returns (chosen config, queries actually used)."""
+           rng: np.random.Generator, screen_cells: Sequence[str] | None = None, **_) -> Tuple[str, int]:
+    """
+    One run of LIBRA. Returns (chosen config, queries actually used).
+
+    screen_cells overrides the fixed screening design. It exists for the
+    design-evolution experiment, which needs to score alternative subsets; the
+    procedure itself always uses the design hard-coded in screen_sets.
+    """
     replay.reset()
     configs = replay.configs
     pool = list(replay.instructions)
@@ -338,8 +404,10 @@ def select(replay: Replay, hp: Hyper, budget: int,
 
     if budget >= n_cells + 4 * hp.n_race0:
         cells, singles = screen_sets(configs, hp.k_screen, rng)
-        eff, direct = main_effects(replay, cells, singles, take(n_screen))
-        score = np.array([predict(c, eff, direct) for c in configs])
+        if screen_cells is not None:
+            cells = [c for c in screen_cells if c in set(configs)]
+        eff, direct, obs = main_effects(replay, cells, singles, take(n_screen))
+        score = np.array([predict(c, eff, direct, obs) for c in configs])
     else:
         # Below one instruction per screened cell there is nothing to go on.
         score = rng.random(len(configs))

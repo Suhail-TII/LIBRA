@@ -1,0 +1,28 @@
+{
+  "held_out": "gpt-5.1",
+  "cells": [
+    "clean_openai|data_dictionary|libra_then_utos",
+    "clean_openai|latex_table|utos_then_libra",
+    "libra_semantic_inv|data_dictionary|libra_then_utos",
+    "libra_semantic_inv|json|utos_then_libra",
+    "libra_style|html_table|libra_then_utos",
+    "libra_style|json|utos_then_libra",
+    "plinius_format_hijack|data_dictionary|utos_then_libra",
+    "plinius_format_hijack|html_table|libra_then_utos",
+    "plinius_full_openai|data_dictionary|libra_then_utos",
+    "plinius_full_openai|latex_table|utos_then_libra",
+    "plinius_l33tspeak|html_table|utos_then_libra",
+    "plinius_l33tspeak|json|libra_then_utos",
+    "plinius_persona|html_table|libra_then_utos",
+    "plinius_persona|latex_table|utos_then_libra",
+    "struct_attention_frag|data_dictionary|utos_then_libra",
+    "struct_attention_frag|html_table|libra_then_utos",
+    "struct_code_obfuscation|html_table|libra_then_utos",
+    "struct_code_obfuscation|json|utos_then_libra",
+    "struct_poetic_obfusc|html_table|libra_then_utos",
+    "struct_poetic_obfusc|json|libra_then_utos",
+    "struct_refusal_suppress|html_table|libra_then_utos",
+    "struct_refusal_suppress|json|utos_then_libra"
+  ],
+  "train_regret": 3.36574074074074
+}

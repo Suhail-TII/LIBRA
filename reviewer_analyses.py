@@ -185,15 +185,18 @@ def additive_diagnostics(df, hp, budget, seeds):
             pool = list(rp.instructions); rng.shuffle(pool)
             rp.reset()
             sc, si = screen_sets(rp.configs, hp.k_screen, rng)
-            eff, direct = main_effects(rp, sc, si, pool[:n_screen])
+            eff, direct, obs = main_effects(rp, sc, si, pool[:n_screen])
 
+            # Deliberately without obs: this measures how well the ADDITIVE
+            # model predicts, so probed cells must be scored by the model
+            # rather than by their measurement.
             pred = np.array([predict(c, eff, direct) for c in cells])
             if pred.std() > 0 and truth.std() > 0:
                 pear.append(float(np.corrcoef(pred, truth)[0, 1]))
                 spear.append(float(pd.Series(pred).corr(pd.Series(truth),
                                                         method="spearman")))
 
-            allp = np.array([predict(c, eff, direct) for c in rp.configs])
+            allp = np.array([predict(c, eff, direct, obs) for c in rp.configs])
             race_budget = int((1 - hp.screen_frac) * budget)
             k = int(np.clip(2 ** int(np.floor(np.log2(
                 max(race_budget / (2 * hp.n_race0), 4)))), 4, 32))
@@ -236,8 +239,8 @@ def additive_diagnostics(df, hp, budget, seeds):
             pool = list(rp.instructions); rng2.shuffle(pool)
             rp.reset()
             sc, si = screen_sets(rp.configs, hp.k_screen, rng2)
-            eff, direct = main_effects(rp, sc, si, pool[:n_screen])
-            allp = np.array([predict(c, eff, direct) for c in rp.configs])
+            eff, direct, obs = main_effects(rp, sc, si, pool[:n_screen])
+            allp = np.array([predict(c, eff, direct, obs) for c in rp.configs])
             race_budget = int((1 - hp.screen_frac) * budget)
             k = int(np.clip(2 ** int(np.floor(np.log2(
                 max(race_budget / (2 * hp.n_race0), 4)))), 4, 32))

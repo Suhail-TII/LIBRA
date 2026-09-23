@@ -1,0 +1,28 @@
+{
+  "held_out": "Ministral-3-8B-Instruct",
+  "cells": [
+    "clean_openai|html_table|utos_then_libra",
+    "clean_openai|json|libra_then_utos",
+    "libra_semantic_inv|data_dictionary|utos_then_libra",
+    "libra_semantic_inv|json|libra_then_utos",
+    "libra_style|data_dictionary|utos_then_libra",
+    "libra_style|html_table|libra_then_utos",
+    "plinius_format_hijack|json|libra_then_utos",
+    "plinius_format_hijack|latex_table|utos_then_libra",
+    "plinius_full_openai|html_table|utos_then_libra",
+    "plinius_full_openai|latex_table|libra_then_utos",
+    "plinius_l33tspeak|data_dictionary|libra_then_utos",
+    "plinius_l33tspeak|html_table|utos_then_libra",
+    "plinius_persona|html_table|utos_then_libra",
+    "plinius_persona|json|libra_then_utos",
+    "struct_attention_frag|data_dictionary|libra_then_utos",
+    "struct_attention_frag|html_table|utos_then_libra",
+    "struct_code_obfuscation|html_table|utos_then_libra",
+    "struct_code_obfuscation|json|libra_then_utos",
+    "struct_poetic_obfusc|html_table|libra_then_utos",
+    "struct_poetic_obfusc|json|libra_then_utos",
+    "struct_refusal_suppress|html_table|libra_then_utos",
+    "struct_refusal_suppress|json|utos_then_libra"
+  ],
+  "train_regret": 3.6924157303370784
+}

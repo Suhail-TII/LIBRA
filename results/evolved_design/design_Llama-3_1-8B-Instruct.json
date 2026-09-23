@@ -1,0 +1,28 @@
+{
+  "held_out": "Llama-3.1-8B-Instruct",
+  "cells": [
+    "clean_openai|data_dictionary|utos_then_libra",
+    "clean_openai|latex_table|libra_then_utos",
+    "libra_semantic_inv|data_dictionary|utos_then_libra",
+    "libra_semantic_inv|latex_table|libra_then_utos",
+    "libra_style|html_table|libra_then_utos",
+    "libra_style|json|utos_then_libra",
+    "plinius_format_hijack|html_table|utos_then_libra",
+    "plinius_format_hijack|json|libra_then_utos",
+    "plinius_full_openai|data_dictionary|utos_then_libra",
+    "plinius_full_openai|html_table|libra_then_utos",
+    "plinius_l33tspeak|data_dictionary|libra_then_utos",
+    "plinius_l33tspeak|html_table|utos_then_libra",
+    "plinius_persona|html_table|utos_then_libra",
+    "plinius_persona|latex_table|libra_then_utos",
+    "struct_attention_frag|data_dictionary|libra_then_utos",
+    "struct_attention_frag|latex_table|libra_then_utos",
+    "struct_code_obfuscation|data_dictionary|libra_then_utos",
+    "struct_code_obfuscation|latex_table|utos_then_libra",
+    "struct_poetic_obfusc|html_table|libra_then_utos",
+    "struct_poetic_obfusc|latex_table|utos_then_libra",
+    "struct_refusal_suppress|data_dictionary|utos_then_libra",
+    "struct_refusal_suppress|latex_table|libra_then_utos"
+  ],
+  "train_regret": 4.2514044943820215
+}
