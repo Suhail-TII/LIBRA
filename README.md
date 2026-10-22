@@ -39,7 +39,7 @@ regenerates those caches from scratch.
 Alongside it:
 
 - `results/judge_cache.parquet` — per-response classifier verdicts across all
-  128,538 scored responses, supporting the evaluator analysis in Section IV-D.
+  128,414 scored responses, supporting the evaluator analysis in Section IV-D.
 - `results/eval_half_cache.parquet` — the selected configurations measured on
   the held-out 340-instruction evaluation half.
 - `results/provider_filter_rejections.json` — the 13 provider-side content
@@ -193,7 +193,7 @@ config/
   models.yaml             target model registry
 results/
   replay_cache.parquet    103 configs x 180 instructions x 7 models, outcomes
-  judge_cache.parquet     per-response classifier verdicts, 128,538 rows
+  judge_cache.parquet     per-response classifier verdicts, 128,414 rows
   eval_half_cache.parquet the held-out evaluation half for the selected configs
 
 screen_framings.py        Stage A
