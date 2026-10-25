@@ -426,7 +426,10 @@ def select(replay: Replay, hp: Hyper, budget: int,
     race_budget = int((1.0 - hp.screen_frac) * budget)
     k_max = race_budget / (2.0 * hp.n_race0)
     k_cand = int(np.clip(2 ** int(np.floor(np.log2(max(k_max, 4)))), 4, 32))
-    shortlist = [configs[i] for i in np.argsort(-score)[:k_cand]]
+    # kind="stable" so ties resolve by configuration id (replay.configs is
+    # sorted) rather than by the sort implementation. The additive score is
+    # coarse at small budgets and ties at the cut are common.
+    shortlist = [configs[i] for i in np.argsort(-score, kind="stable")[:k_cand]]
 
     # ---- Step 3: successive halving ---------------------------------------
     # Early rounds are deliberately noisy -- they only have to separate the
@@ -435,14 +438,22 @@ def select(replay: Replay, hp: Hyper, budget: int,
     alive, n, seen = list(shortlist), hp.n_race0, 0
     hits = {c: 0 for c in alive}
     while len(alive) > 1 and replay.n_queries < budget:
-        new = take(n - seen)
+        # A round must be AFFORDABLE and EQUAL. The budget is checked before
+        # any of it is spent, and every survivor receives the same fresh
+        # instructions, so no candidate is eliminated for having been cut
+        # off mid-round. The previous form checked the budget between
+        # candidates and then queried a whole batch, overspending the cap
+        # and ranking survivors on unequal observation counts.
+        afford = (budget - replay.n_queries) // len(alive)
+        k_new = min(n - seen, afford)
+        if k_new <= 0:
+            break
+        new = take(k_new)
         if not new:
             break
         for c in alive:
-            if replay.n_queries >= budget:
-                break
             hits[c] += sum(replay.query(c, x) for x in new)
-        seen = n
+        seen += len(new)
         alive = sorted(alive, key=lambda c: -hits[c])[: max(1, len(alive) // 2)]
         n *= 2
 
@@ -516,19 +527,28 @@ def bl_race_only(replay, hp, budget, rng, **_) -> Tuple[str, int]:
     replay.reset()
     pool = list(replay.instructions)
     rng.shuffle(pool)
-    alive = list(rng.choice(replay.configs, size=hp.k_cand, replace=False))
+    # Width scales with the budget, as in select(). The fixed hp.k_cand made
+    # this baseline spend exactly 64 queries at EVERY budget, so its flat
+    # curve described the baseline rather than the value of racing. No budget
+    # is spent screening here, so the whole of B is available and the cap is
+    # the size of the space rather than 32.
+    k = int(np.clip(2 ** int(np.floor(np.log2(max(budget / (2.0 * hp.n_race0), 4)))),
+                    4, len(replay.configs)))
+    alive = list(rng.choice(replay.configs, size=k, replace=False))
     n, seen, cursor = hp.n_race0, 0, 0
     hits = {c: 0 for c in alive}
     while len(alive) > 1 and replay.n_queries < budget:
-        new = pool[cursor:cursor + (n - seen)]
+        afford = (budget - replay.n_queries) // len(alive)
+        k_new = min(n - seen, afford)
+        if k_new <= 0:
+            break
+        new = pool[cursor:cursor + k_new]
         cursor += len(new)
         if not new:
             break
         for c in alive:
-            if replay.n_queries >= budget:
-                break
             hits[c] += sum(replay.query(c, x) for x in new)
-        seen = n
+        seen += len(new)
         alive = sorted(alive, key=lambda c: -hits[c])[: max(1, len(alive) // 2)]
         n *= 2
     return max(alive, key=lambda c: hits.get(c, 0)), replay.n_queries

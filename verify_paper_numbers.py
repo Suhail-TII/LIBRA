@@ -231,7 +231,8 @@ def coverage_design(per_framing, seed=0, trials=200_000):
     returns 22 and the sweep compares nothing.
     """
     from collections import Counter
-    from attacks.libra_framings import UTOS_TOP4, STAGE_B_FRAMINGS
+    from attacks.libra_framings import UTOS_TOP4
+    from run_stage_b import STAGE_B_FRAMINGS
     F, T = sorted(STAGE_B_FRAMINGS), sorted(UTOS_TOP4)
     orders = ["libra_then_utos", "utos_then_libra"]
     opts = [(t, o) for t in T for o in orders]
@@ -249,37 +250,69 @@ def coverage_design(per_framing, seed=0, trials=200_000):
     return [f"{a}|{b}|{c}" for a, b, c in best], best_s
 
 
-def sweep(d, seeds=200):
-    """Table 6: screening size against budget."""
-    from libra_select import Replay, Hyper, select
+def _coverage_of(cells):
+    """(framing-template pairs, framing-order pairs) a design actually covers."""
+    ft = len({tuple(c.split("|")[:2]) for c in cells})
+    fo = len({(c.split("|")[0], c.split("|")[2]) for c in cells})
+    return ft, fo
+
+
+def sweep(d, seeds=200, out="results/table6_sweep.csv"):
+    """
+    Table 6: screening size against budget.
+
+    Seeds follow the main rule, 10_000 * budget + index, so this table and
+    Figure 3 describe the same experiment. The production SCREEN_DESIGN gets
+    its own column (22p) because the constructed 22-cell design optimises a
+    different objective and is not what the procedure runs.
+    """
+    from libra_select import Replay, Hyper, select, SCREEN_DESIGN
     head("V-B", "Screening size sweep (Table 6)")
 
     designs = {}
     for n in (1, 2, 3, 4):
-        cells, s = coverage_design(n)
-        designs[len(cells)] = cells
-        print(f"    {len(cells):>2} cells: coverage {s[0]}/44 framing-template, "
-              f"{s[1]}/22 framing-order")
+        cells, _ = coverage_design(n)
+        designs[f"{len(cells)}"] = cells
+    designs["22p"] = list(SCREEN_DESIGN)
 
-    print(f"\n{'budget':>7} " + " ".join(f"{k:>8}" for k in sorted(designs)))
+    order = sorted(designs, key=lambda k: (len(designs[k]), k))
+    print("    design   cells   framing-template   framing-order")
+    for k in order:
+        ft, fo = _coverage_of(designs[k])
+        tag = "  <- production, used by the method" if k == "22p" else ""
+        print(f"    {k:>6}   {len(designs[k]):>5}   {ft:>10}/44   "
+              f"{fo:>10}/22{tag}")
+
+    rows = []
+    print(f"\n{'budget':>7} " + " ".join(f"{k:>9}" for k in order))
     for B in (120, 240, 360, 480, 720, 960, 1440):
         row = []
-        for k in sorted(designs):
+        for k in order:
+            cells = designs[k]
             # k_screen must match the design size or n_s is computed for the
             # wrong number of cells and the screening budget is overspent.
-            hp = Hyper(k_screen=k)
+            hp = Hyper(k_screen=len(cells))
             regs = []
             for m in POOL:
                 rp = Replay(d, m); _, star = rp.optimum()
                 regs += [star - rp.true_asr(
-                    select(rp, hp, B, np.random.default_rng(s),
-                           screen_cells=designs[k])[0]) for s in range(seeds)]
-            row.append(np.mean(regs) * 100)
+                    select(rp, hp, B, np.random.default_rng(10_000 * B + s),
+                           screen_cells=cells)[0]) for s in range(seeds)]
+            mean = float(np.mean(regs)) * 100
+            row.append(mean)
+            rows.append(dict(budget=B, design=k, n_cells=len(cells),
+                             mean_regret_points=mean, seeds=seeds * len(POOL)))
         mark = int(np.argmin(row))
-        cells = [f"{x:>8.2f}" + ("*" if i == mark else " ")
-                 for i, x in enumerate(row)]
-        print(f"{B:>7} " + " ".join(cells))
+        print(f"{B:>7} " + " ".join(
+            f"{x:>9.2f}" + ("*" if i == mark else " ")
+            for i, x in enumerate(row)))
     print("\n    * best in row")
+    print("    22p is the design the procedure actually uses; the bare 22 is")
+    print("    a same-sized design built on a different objective.")
+
+    if out:
+        pd.DataFrame(rows).to_csv(out, index=False)
+        print(f"\n    wrote {out}")
 
 
 # ═══════════════════════════════════════════════════════════════════════════
