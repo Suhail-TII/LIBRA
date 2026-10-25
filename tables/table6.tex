@@ -1,0 +1,27 @@
+\begin{table}[!t]
+\centering
+\caption{Mean regret in points across the five targets, sweeping the
+screening size against budget. $\mathcal{S}^{\dagger}$ is the design the
+procedure uses; the others are constructed at each size to maximise pair
+coverage. Parenthesised values are distinct (framing, order) pairs out of 22.
+$^{*}$ marks a paired difference from $\mathcal{S}^{\dagger}$ over 200 seed
+blocks that survives Holm adjustment across all 28 comparisons. Cell lists
+and their hashes are released with the code.}
+\label{tab:ksweep}
+\footnotesize
+\setlength{\tabcolsep}{5pt}
+\begin{tabular}{@{}r r r r r r@{}}
+\toprule
+ & $k_s{=}11$ & $k_s{=}22$ & $\mathcal{S}^{\dagger}$ & $k_s{=}33$ & $k_s{=}44$ \\
+Budget & (11/22) & (22/22) & (18/22) & (22/22) & (22/22) \\
+\midrule
+ 120 & 14.44$^{*}$ & 14.85$^{*}$ & 17.06 & 24.30$^{*}$ & 25.82$^{*}$ \\
+ 240 &  7.01 &  6.14 &  6.43 &  7.03 &  8.17$^{*}$ \\
+ 360 &  5.14 &  4.87 &  5.49 &  5.50 &  5.41 \\
+ 480 &  3.14 &  3.17 &  3.37 &  3.50 &  3.00 \\
+ 720 &  2.53 &  2.72 &  2.73 &  2.89 &  2.52 \\
+ 960 &  1.89 &  2.39 &  2.29 &  2.55 &  1.95 \\
+1440 &  0.99 &  1.21 &  1.16 &  1.30 &  1.19 \\
+\bottomrule
+\end{tabular}
+\end{table}
