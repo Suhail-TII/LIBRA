@@ -67,13 +67,14 @@ plt.rcParams.update({
 
 def fig_regret(results_csv: str, outdir: Path, seeds_csv: str | None = None):
     """
-    One panel, log-x, with shaded interquartile ranges where per-seed values
-    are available.
- 
-    The band is the 25th-75th percentile over seeds, pooled across the five
-    targets. It is deliberately not a confidence interval on the mean: the
-    quantity a reader cares about is how much an individual run varies, since
-    an adversary gets one run, not two hundred.
+    One panel, log-x, with a shaded 95% interval on the mean where per-seed
+    values are available.
+
+    Targets are averaged within each seed first, so one block is one seed and
+    the band describes seed-to-seed spread of the procedure rather than the
+    spread between targets, whose ceilings run from 23.6% to 90.6% and would
+    otherwise dominate it. That is the blocking the paired comparisons use,
+    and it is what the figure caption claims.
     """
     r = pd.read_csv(results_csv)
     piv = r.pivot_table(index="budget", columns="method", values="regret") * 100
@@ -90,18 +91,19 @@ def fig_regret(results_csv: str, outdir: Path, seeds_csv: str | None = None):
         g = per_seed.groupby(["method", "budget"]).regret
         m, sd, n = g.mean() * 100, g.std() * 100, g.count()
         half = 1.96 * sd / np.sqrt(n)
-        bands = pd.DataFrame({0.25: m - half, 0.75: m + half})
+        bands = pd.DataFrame({"lo": m - half, "hi": m + half})
  
     style = {
         "LIBRA":         dict(color="#1f5c3d", marker="o", lw=2.0, zorder=5),
-        "singles_sweep": dict(color="#8c2f1f", marker="s", ls="--"),
+        "singles_sweep": dict(color="#cc5500", marker="s", ls="--"),
         "ucb":           dict(color="#31527a", marker="^", ls="-."),
         "random":        dict(color="#7a7a7a", marker="v", ls=":"),
-        "race_only":     dict(color="#c08a5a", marker="d", ls=(0, (3, 1, 1, 1))),
+        "full_space_halving": dict(color="#6a3d9a", marker="d",
+                                   ls=(0, (3, 1, 1, 1))),
     }
     label = {"LIBRA": "LIBRA", "singles_sweep": "Singles sweep",
              "ucb": "UCB1", "random": "Random search",
-             "race_only": "Race, no screening"}
+             "full_space_halving": "Full-space halving"}
  
     fig, ax = plt.subplots(figsize=(3.5, 2.9))
  
@@ -112,13 +114,15 @@ def fig_regret(results_csv: str, outdir: Path, seeds_csv: str | None = None):
         # band first so the line sits on top of it
         if bands is not None and m in bands.index.get_level_values(0):
             b = bands.loc[m]
-            ax.fill_between(b.index, b[0.25], b[0.75],
+            ax.fill_between(b.index, b["lo"], b["hi"],
                             color=style[m]["color"], alpha=0.13, lw=0, zorder=2)
         ax.plot(piv.index, piv[m], label=label[m], **style[m])
  
     ax.axhline(32.6, color="#b0b0b0", lw=0.9, zorder=1)
-    ax.text(piv.index[0], 31.6, "Transfer (0 queries)", ha="left", va="top",
-            fontsize=6.5, color="#707070")
+    # right end, above the rule: at the smallest budget this label sat
+    # underneath random search and its band, which struck it through
+    ax.text(piv.index[-1], 33.4, "Transfer (0 queries), 32.6",
+            ha="right", va="bottom", fontsize=6.5, color="#707070")
  
     ax.set_xscale("log")
     ax.xaxis.set_minor_locator(NullLocator())
@@ -127,7 +131,9 @@ def fig_regret(results_csv: str, outdir: Path, seeds_csv: str | None = None):
     ax.set_xticklabels([str(b) for b in piv.index])
     ax.set_xlabel("Query budget")
     ax.set_ylabel("Mean regret (points of ASR)")
-    ax.set_ylim(0, 37)
+    # full-space halving reaches 40.4 points at 120 queries; a fixed
+    # ceiling of 37 clipped it off the axes without saying so
+    ax.set_ylim(0, max(37.0, float(piv.max().max()) * 1.08))
     ax.grid(alpha=0.25, lw=0.4)
     ax.legend(frameon=False, ncol=3, handlelength=1.8, columnspacing=1.2,
               loc="upper center", bbox_to_anchor=(0.5, -0.18))
@@ -138,7 +144,7 @@ def fig_regret(results_csv: str, outdir: Path, seeds_csv: str | None = None):
     fig.savefig(out)
     fig.savefig(out.with_suffix(".png"))
     plt.close(fig)
-    print(f"  {out}" + ("  (with IQR bands)" if bands is not None else
+    print(f"  {out}" + ("  (with 95% intervals)" if bands is not None else
                         "  (no per-seed file -- lines only)"))
 
 
@@ -198,8 +204,10 @@ def fig_heatmap(cache: str, outdir: Path):
     # mark each target's optimum
     for j, m in enumerate(POOL):
         i = int(np.argmax(a[m].values))
+        # clip_on=False: the optima for two targets are in the first
+        # two rows, and the top spine cut those stars in half
         ax.plot(j, i, marker="*", ms=7, color="#8c2f1f",
-                mec="white", mew=0.5, zorder=5)
+                mec="white", mew=0.5, zorder=5, clip_on=False)
 
     cb = fig.colorbar(im, ax=ax, fraction=0.05, pad=0.03)
     cb.set_label("Attack success rate (%)", fontsize=7.5)
@@ -229,7 +237,7 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--cache", default="results/replay_cache.parquet")
     ap.add_argument("--results", default="results/reviewer_analyses.csv")
-    ap.add_argument("--seeds-csv", default="results/regret_seeds.csv")
+    ap.add_argument("--seeds-csv", default="results/per_seed_regrets.csv")
     ap.add_argument("--outdir", default="figures")
     args = ap.parse_args()
 
