@@ -80,8 +80,11 @@ def main():
     sys.path.insert(0, ".")
 
     from libra_select import Replay, Hyper, select, SCREEN_DESIGN, POOL, CACHE
-    from attacks.libra_framings import UTOS_TOP4
-    from run_stage_b import STAGE_B_FRAMINGS
+    # both constants come straight from attacks.libra_framings. Going via
+    # run_stage_b pulled in analysis.metrics and therefore torch, so Table VI
+    # could not be reproduced without the GPU stack despite being pure replay
+    # over CSVs. run_stage_b only re-exports the name anyway.
+    from attacks.libra_framings import UTOS_TOP4, STAGE_B_FRAMINGS
     from scipy import stats
 
     out = Path(a.outdir); out.mkdir(parents=True, exist_ok=True)
