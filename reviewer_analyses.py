@@ -15,10 +15,17 @@ REVISION 04 (2026-10-23). Changes from the published version:
      960 every run inflated its statistics by 23 pulls on average, peaking
      at 99, without spending budget.
 
-  3. DIAGNOSTICS. additive_diagnostics could not run against the current
-     libra_select: main_effects returns three values since the measured-cell
-     scoring change, and this unpacked two. It now unpacks three and passes
-     the observed cells to predict(), matching what select() actually does.
+  3. DIAGNOSTICS. Our working copy of additive_diagnostics unpacked two
+     values from main_effects, which returns three since the measured-cell
+     scoring change, so it could not run. The PUBLISHED version at 489db7f
+     already unpacked three and ran correctly; only the cluster copy was
+     stale, and an earlier note of ours that called the released function
+     uncallable was wrong. The substantive change here is different: the
+     diagnostics now pass the observed cells to predict() for shortlist
+     membership, matching what select() ranks by, while the correlations
+     are computed from the PURE ADDITIVE prediction with no observations.
+     Conflating those two is what produced the earlier 0.55/0.53 figures
+     in place of 0.51/0.49.
 
   4. SEEDS. Every run, including the diagnostics, now uses
      rng = default_rng(10_000 * budget + seed_index). The diagnostics

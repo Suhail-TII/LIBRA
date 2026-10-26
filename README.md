@@ -24,9 +24,11 @@ Every table and figure in the paper comes from the released caches, so the
 first path needs no GPU, no model weights, and no API key. The second path
 regenerates those caches from scratch.
 
-`make_tables.py` re-derives all 97 numbers the manuscript quotes and reports
-PASS or FAIL against each, so the first path does not merely produce output,
-it checks it against what is printed in the paper.
+`make_tables.py` re-derives 99 reference values from the released CSVs and
+reports PASS or FAIL against each. Read what it is precisely: it compares the
+CSV-derived values against constants transcribed into the script, not against
+the manuscript source. It does not parse the `.tex` files, so it catches drift
+in the data or the code, not an edit to a number in the paper.
 
 ---
 
@@ -99,7 +101,7 @@ python make_tables.py                                       # Tables 5 and 6
 | `table6_paired.py` | `results/table6_*`; the screening-size sweep with Holm-adjusted paired tests |
 | `run_eval_half.py --analyse` | probe vs held-out evaluation comparison |
 | `make_figures.py` | `figures/fig_heatmap.pdf` (Figure 2), `figures/fig_regret.pdf` (Figure 3) |
-| `make_tables.py` | `tables/table5.tex`, `tables/table6.tex`, **and the 97-number check** |
+| `make_tables.py` | `tables/table5.tex`, `tables/table6.tex`, **and the 99-value reference check** |
 
 Run `make_figures.py` and `make_tables.py` last: both read the CSVs the
 earlier scripts write. `make_tables.py` exits non-zero if any value in the
@@ -134,9 +136,11 @@ python coverage_design.py     # 22/44 framing-template, 22/22 framing-order
 
 The subset actually used, `libra_select.SCREEN_DESIGN`, attains 22/44
 framing-template but **18/22** framing-order pairs: four framings receive both
-of their cells at the same composition order. It predates the generator
-released here, and we report the subset we evaluated rather than substituting
-one we did not run. The exhaustive grid of Section IV contains both orders for
+of their cells at the same composition order. The generator released here does
+not reproduce it, and we report the subset we evaluated rather than
+substituting one we did not run. We make no claim about which was constructed
+first: a different generator output establishes non-reproduction, not
+chronology. The exhaustive grid of Section IV contains both orders for
 every framing-template pair, so the order result there is unaffected.
 Section V-F measures what the gap costs.
 
@@ -145,14 +149,16 @@ coverage-optimised designs against the one we use, with Holm-adjusted paired
 tests over seed blocks. Every design's exact cell list and SHA-256 are written
 to `results/table6_designs.json` before anything uses them.
 
-`evolve_design.py` asks whether a better design exists at all, judged by regret
-rather than by a structural criterion. It evolves on four targets and measures
-on the fifth, rotating across all five, so no design is scored on a target it
-was tuned on. **It does not beat the structural design out of sample**: worse
-on three of five held-out targets at 240 queries and four of five at 960, mean
-regret 7.60 against 6.41 at 240. The evolved designs reach 20 or 21 of the 22
-framing-order pairs where the production design reaches 18, so the coverage gap
-is not what limits them. Outputs are in `results/evolved_design/`.
+`evolve_design.py` and `results/evolved_design/` are **legacy exploratory
+material and are not evidence for anything in the paper.** The script asks
+whether a design chosen by regret rather than by a structural criterion would
+do better, evolving on four targets and measuring on the fifth. The archived
+`leave_one_out.csv` in that folder does **not** reproduce under the released
+selector at either 30 or 200 evaluation seeds, under either a zero-based or a
+budget-offset seed rule, so the selector revision, job arguments, seed counts,
+seed rule, cache hashes and coverage-penalty lambda behind it are not
+established. Nothing in the manuscript rests on it, and it should not be cited
+as evidence that greater pair coverage cannot help.
 
 `results/evolved_design/final_design.json` is a *different* 22-cell list
 (SHA-256 `da7b9f8a7b97`, against the production design's `f75b5ca49866`) and is
@@ -288,7 +294,7 @@ analysis
 
 output
   make_figures.py         Figures 2 and 3
-  make_tables.py          Tables 5 and 6, and the 97-number check
+  make_tables.py          Tables 5 and 6, and the 99-value reference check
 ```
 
 ---
