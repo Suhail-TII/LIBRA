@@ -24,12 +24,18 @@ Every table and figure in the paper comes from the released caches, so the
 first path needs no GPU, no model weights, and no API key. The second path
 regenerates those caches from scratch.
 
+`make_tables.py` re-derives all 97 numbers the manuscript quotes and reports
+PASS or FAIL against each, so the first path does not merely produce output,
+it checks it against what is printed in the paper.
+
 ---
 
 ## What is and is not released
 
 **Released.** `results/replay_cache.parquet` is the measurement: one row per
-(model, configuration, instruction) with a boolean outcome.
+(model, configuration, instruction) with a boolean outcome. It holds 129,162
+rows covering seven models, the five targets of the paper plus GPT-5-mini and
+GPT-5-nano, which appear only in Table 2.
 
 | model | config | instruction_id | success | kind |
 |---|---|---|---|---|
@@ -45,6 +51,14 @@ Alongside it:
 - `results/provider_filter_rejections.json` — the 13 provider-side content
   filter rejections discussed in Section IV-D, with request bodies and provider
   request IDs omitted.
+- `results/per_seed_regrets.csv` — every individual run behind Figure 3 and
+  Table 5: one row per (target, method, budget, seed).
+- `results/table6_per_seed.csv`, `results/table6_paired.csv`,
+  `results/table6_designs.json` — the screening-size sweep of Table 6, its
+  paired comparisons, and the exact cell list of every design with a SHA-256.
+- `results/reviewer_analyses.csv`, `results/lomo_results.csv`,
+  `results/search_space.csv` — aggregate baseline, leave-one-model-out and
+  full-grid summaries.
 - `PROMPTS.md` — all eleven framings, four templates, and both composition
   orders, rendered on an example instruction.
 
@@ -71,17 +85,25 @@ Then:
 python verify_section4.py                                   # Section IV
 python libra_select.py --lomo --budgets 120,240,360,480,720,960 --seeds 200
 python reviewer_analyses.py --boot 2000 --seeds 200         # Section V
+python table6_paired.py --seeds 200                         # Table 6
 python run_eval_half.py --analyse                           # probe/eval check
 python make_figures.py --outdir figures                     # Figures 2 and 3
+python make_tables.py                                       # Tables 5 and 6
 ```
 
 | script | produces |
 |---|---|
 | `verify_section4.py` | Tables 2–4; transfer cost, synergy, order, evaluator |
-| `libra_select.py --lomo` | Figure 2, Table 6; the search and its baselines |
-| `reviewer_analyses.py` | singles/UCB baselines, additive diagnostics, bootstrap CIs |
+| `libra_select.py --lomo` | `results/lomo_results.csv`; the search under budget |
+| `reviewer_analyses.py` | `results/per_seed_regrets.csv`, the baselines, the additive diagnostics of Section V-E, bootstrap CIs |
+| `table6_paired.py` | `results/table6_*`; the screening-size sweep with Holm-adjusted paired tests |
 | `run_eval_half.py --analyse` | probe vs held-out evaluation comparison |
-| `make_figures.py` | `figures/fig_regret.pdf`, `figures/fig_heatmap.pdf` |
+| `make_figures.py` | `figures/fig_heatmap.pdf` (Figure 2), `figures/fig_regret.pdf` (Figure 3) |
+| `make_tables.py` | `tables/table5.tex`, `tables/table6.tex`, **and the 97-number check** |
+
+Run `make_figures.py` and `make_tables.py` last: both read the CSVs the
+earlier scripts write. `make_tables.py` exits non-zero if any value in the
+manuscript fails to reproduce.
 
 `libra_select.py` replays the grid: the procedure may query only
 (configuration, instruction) pairs that were actually measured, and receives the
@@ -94,6 +116,47 @@ curve; these are seed noise rather than a property of the procedure.
 `analyse_search_space.py` is included but is **not** part of this path: it reads
 the unreleased raw stage CSVs and exits with a message if they are absent.
 `verify_section4.py` computes the same Section IV numbers from the caches.
+
+---
+
+## The screening design
+
+The search screens a fixed subset of 22 composed cells. Which 22 is a design
+choice, and three scripts bear on it.
+
+`coverage_design.py` is the generator. It maximises distinct (framing,
+template) pairs, then (framing, order) pairs, then evenness of template and
+order counts. Run as a script it reports what it reaches on three seeds:
+
+```bash
+python coverage_design.py     # 22/44 framing-template, 22/22 framing-order
+```
+
+The subset actually used, `libra_select.SCREEN_DESIGN`, attains 22/44
+framing-template but **18/22** framing-order pairs: four framings receive both
+of their cells at the same composition order. It predates the generator
+released here, and we report the subset we evaluated rather than substituting
+one we did not run. The exhaustive grid of Section IV contains both orders for
+every framing-template pair, so the order result there is unaffected.
+Section V-F measures what the gap costs.
+
+`table6_paired.py` sweeps the screening size against budget and compares
+coverage-optimised designs against the one we use, with Holm-adjusted paired
+tests over seed blocks. Every design's exact cell list and SHA-256 are written
+to `results/table6_designs.json` before anything uses them.
+
+`evolve_design.py` asks whether a better design exists at all, judged by regret
+rather than by a structural criterion. It evolves on four targets and measures
+on the fifth, rotating across all five, so no design is scored on a target it
+was tuned on. **It does not beat the structural design out of sample**: worse
+on three of five held-out targets at 240 queries and four of five at 960, mean
+regret 7.60 against 6.41 at 240. The evolved designs reach 20 or 21 of the 22
+framing-order pairs where the production design reaches 18, so the coverage gap
+is not what limits them. Outputs are in `results/evolved_design/`.
+
+`results/evolved_design/final_design.json` is a *different* 22-cell list
+(SHA-256 `da7b9f8a7b97`, against the production design's `f75b5ca49866`) and is
+**not** used anywhere in the paper.
 
 ---
 
@@ -191,23 +254,41 @@ models/
 config/
   advbench_split_v1.json  the frozen probe/eval split (do not regenerate)
   models.yaml             target model registry
+utils/
+  checkpoint.py           resumable run state
+  dataset_loader.py       AdvBench loading and the frozen split
 results/
   replay_cache.parquet    103 configs x 180 instructions x 7 models, outcomes
   judge_cache.parquet     per-response classifier verdicts, 128,414 rows
   eval_half_cache.parquet the held-out evaluation half for the selected configs
+  per_seed_regrets.csv    every run behind Figure 3 and Table 5
+  table6_*.{csv,json}     the screening-size sweep, its tests, its designs
+  evolved_design/         the evolved-design negative result
 
-screen_framings.py        Stage A
-screen_templates.py       Stage A-T
-run_stage_b.py            Stage B
-batch_stage_a.py          API path for all three stages (--axis framings|templates|cells)
-decode_and_rejudge.py     encoded-output correction
-run_eval_half_gen.py      generation on the held-out evaluation half
-verify_section4.py        Section IV, all numbers from the caches
-libra_select.py           Section V, the search procedure
-reviewer_analyses.py      Section V, baselines and diagnostics
-run_eval_half.py          probe/eval selection and comparison
-make_figures.py           the two paper figures
-analyse_search_space.py   Section IV from the raw CSVs (not released)
+measurement
+  screen_framings.py      Stage A
+  screen_templates.py     Stage A-T
+  run_stage_b.py          Stage B
+  batch_stage_a.py        API path for all three stages (--axis framings|templates|cells)
+  decode_and_rejudge.py   encoded-output correction
+  run_eval_half_gen.py    generation on the held-out evaluation half
+  build_advbench_split.py the probe/eval partition
+
+analysis
+  verify_section4.py      Section IV, all numbers from the caches
+  libra_select.py         Section V, the search procedure and SCREEN_DESIGN
+  reviewer_analyses.py    Section V, baselines and the additive diagnostics
+  full_space_halving.py   the no-screening baseline
+  table6_paired.py        Table 6, the screening-size sweep with paired tests
+  coverage_design.py      the screening-design generator
+  evolve_design.py        the evolved-design negative result
+  run_eval_half.py        probe/eval selection and comparison
+  verify_paper_numbers.py cross-checks across the sweeps
+  analyse_search_space.py Section IV from the raw CSVs (not released)
+
+output
+  make_figures.py         Figures 2 and 3
+  make_tables.py          Tables 5 and 6, and the 97-number check
 ```
 
 ---
