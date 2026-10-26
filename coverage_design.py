@@ -29,13 +29,17 @@ T = [f"T{i}" for i in range(4)]
 O = ["o0", "o1"]
 
 
-def score(design):
+def score(design, T, O):
     ft = {(c[0], c[1]) for c in design}
     fo = {(c[0], c[2]) for c in design}
     t = Counter(c[1] for c in design)
     o = Counter(c[2] for c in design)
     bal = np.std([t[x] for x in T]) + np.std([o[x] for x in O])
     return (len(ft), len(fo), -bal)
+# score() used to read T and O from module scope. Run as a script that is
+# harmless, because __main__ rebinds them to the real names before searching.
+# Imported, it silently scored every design's balance as 0.0, so the third
+# tie-break did nothing. The levels are parameters now.
 
 
 def search(F, T, O, n_per_framing=2, restarts=300000, seed=0):
@@ -47,7 +51,7 @@ def search(F, T, O, n_per_framing=2, restarts=300000, seed=0):
         for f in F:
             for p in rng.choice(len(opts), size=n_per_framing, replace=False):
                 d.append((f, opts[p][0], opts[p][1]))
-        s = score(d)
+        s = score(d, T, O)
         if s > best_s:
             best, best_s = d, s
     return best, best_s

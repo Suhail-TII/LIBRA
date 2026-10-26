@@ -15,6 +15,10 @@ python-dotenv>=1.0.0
 numpy>=1.24.0
 scipy>=1.10.0
 pandas>=2.0.0
+# parquet engine: results/replay_cache.parquet is the key released artifact
+# and pandas cannot open it without this. Present in environment.yml but it
+# was missing here, so a pip install could not read the data.
+pyarrow>=14.0.0
 tqdm>=4.65.0
 
 # Visualization
