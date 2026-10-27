@@ -336,9 +336,9 @@ output
 
 **Report the generation interface.** Raw completion and native chat templating
 are different input conditions. In the archived Llama-2-7B-Chat diagnostic,
-the technical-manual framing has 350 strict successes among 360 raw-completion
-records (97.2%) and none among 180 templated records. These groups have different
-sample sizes; the counts alone do not establish a matched comparison.
+the technical-manual framing succeeds on 175 of 180 probe instructions (97.2%)
+as a raw completion, in each of two independent runs, and on none of the same
+180 submitted through the model's chat template.
 `model_wrapper.py` applies each model's native template by default;
 `--no-chat-template` enables raw-completion mode.
 

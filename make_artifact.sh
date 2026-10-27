@@ -113,6 +113,7 @@ copy run_eval_half_gen.py     req   # probe/eval check: generation
 copy make_figures.py          req   # the two paper figures
 copy make_tables.py           req   # Tables V and VI, and the number check
 copy check_manuscript_numbers.py req  # the manuscript's own numbers vs results/
+copy compare_framing_provenance.py req # framing overlap against the upstream corpus
 copy verify_paper_numbers.py
 # only needed if reviewer_analyses.py imports it rather than defining
 # bl_successive_halving itself, so not marked required

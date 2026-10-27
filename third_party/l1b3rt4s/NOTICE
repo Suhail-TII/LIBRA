@@ -22,11 +22,27 @@ retained in the final design space contain substantial reproduced text:
 A third, clean_openai, shares a 17-word run at Jaccard 0.337 and is described
 in the registry as a distilled variant.
 
-The remaining framings retained in the design space were measured against the
+A third, clean_openai, is an adaptation of a cleaned variant from the same
+corpus. The registry records its derivation, which is the basis for crediting
+it, rather than the measured overlap: it shares a 17-word run at token Jaccard
+0.337.
+
+The following framings retained in the design space were measured against the
 same corpus and share runs of eight words or fewer:
 
     plinius_l33tspeak 8, plinius_persona 5, libra_semantic_inv 3,
-    libra_style 1, and the struct_* family 1 to 2
+    libra_style 1, struct_attention_frag 2, struct_poetic_obfusc 2,
+    struct_refusal_suppress 2
+
+NOT ASSESSED
+
+    struct_code_obfuscation
+
+This framing has not been compared. Its block in PROMPTS.md contains nested
+code fences, which the comparison script's extractor does not parse, so it was
+silently skipped rather than measured. It is a struct_* framing and its three
+siblings share runs of two words, but that is an expectation, not a result.
+This entry stands until the framing is rendered and compared directly.
 
 WHAT WAS CHANGED
 
@@ -37,9 +53,13 @@ are recorded in attacks/framing_registry.py.
 
 HOW THIS WAS MEASURED
 
-compare_framing_provenance.py in this repository reproduces the figures above
-against a clone of the corpus. It reports similarity scores only and prints no
-prompt text.
+compare_framing_provenance.py in this repository reproduces the figures above.
+It reports similarity scores only and prints no prompt text from either side.
+The figures above were measured against L1B3RT4S at commit 64960b783249d36f76a48a33103cc4b168332b9b.
+
+    git clone https://github.com/elder-plinius/L1B3RT4S /tmp/l1b
+    git -C /tmp/l1b checkout 64960b783249d36f76a48a33103cc4b168332b9b
+    python compare_framing_provenance.py --ours PROMPTS.md --theirs /tmp/l1b
 
 SCOPE
 
