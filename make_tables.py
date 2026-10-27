@@ -1,7 +1,12 @@
 #!/usr/bin/env python3
 """
 make_tables.py -- regenerate Table 5 and Table 6 from the result CSVs, and
-verify every number the manuscript quotes against them.
+compare them against the reference values transcribed into this file.
+
+These reference values were copied from the manuscript by hand. This script
+does not read the .tex, so it cannot detect a manuscript edit that moves a
+number away from the value recorded here. check_manuscript_numbers.py is
+the script that parses the .tex.
 
 The figures are not built here. make_figures.py owns fig_regret.pdf and
 fig_heatmap.pdf and is left alone; this script only writes LaTeX tables and
@@ -17,7 +22,7 @@ wrote, so it is safe to re-run and cannot change a result:
     results/table6_designs.json     <- table6_paired.py      (pair coverage)
 
 Outputs tables/table5.tex and tables/table6.tex, then prints a VERIFY block
-comparing the regenerated values against the numbers written into the .tex.
+comparing the regenerated values against the reference values below.
 Exit status is 1 if any disagree. A FAIL is a number to fix in the
 manuscript, not a bug to work around: the EXPECT_* tables below are there to
 be read, never edited into silence.
@@ -267,7 +272,7 @@ def table6(d: dict, out: Path) -> pd.DataFrame | None:
 def verify(d: dict, fig_means: pd.DataFrame, t5: pd.DataFrame,
            t6: pd.DataFrame | None) -> None:
     print("\n" + "=" * 74)
-    print("VERIFY  regenerated values against the numbers in the manuscript")
+    print("VERIFY  regenerated values against the embedded reference values")
     print("=" * 74)
 
     print("\n  Figure 3 and Section V-D")
@@ -321,7 +326,7 @@ def verify(d: dict, fig_means: pd.DataFrame, t5: pd.DataFrame,
         print("\n  Fix the manuscript to the regenerated value, or say why the")
         print("  data moved. Do not edit EXPECT_* to make this quiet.")
     else:
-        print("  every manuscript number reproduces from the released CSVs")
+        print("  every embedded reference value reproduces from the released CSVs")
     print("-" * 74)
 
 

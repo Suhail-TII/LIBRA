@@ -1,8 +1,8 @@
 {
-  "date": "2026-10-26",
+  "date": "2026-10-27",
   "repository": "https://github.com/Suhail-TII/LIBRA",
-  "commit": "baf520d2f4033d1db9388f144bdb13e513b6f312",
-  "scope": "Main replay independently checked at the baseline commit; public documentation and exploratory design update checked at the later revision. Historical generation provenance remains incomplete.",
+  "commit": "e3d71f132c5e9d8ae3c84d30cbce6bcd64175925",
+  "scope": "Independent replay audit at baseline c478db7; unchanged core inputs verified against release e3d71f1. Historical provenance below is author-reported and partially recoverable, not a contemporaneous complete execution record.",
   "environment": {
     "python": "3.12.14 (main, Aug 25 2026, 13:50:33) [Clang 22.1.3 ]",
     "platform": "macOS-26.5.2-arm64-arm-64bit",
@@ -132,11 +132,6 @@
     "affiliations_and_membership": "Preserved as supplied following user confirmation on 2026-10-26",
     "disclosure": "Expanded to describe adopted code assistance, result checking and manuscript revisions; included for final author review"
   },
-  "public_state_observed": {
-    "main": "ce5f32d10159dccbca9098e8f8fa5fbe1ba5ad76",
-    "revision-04": "5076a63110f4a14bd8428942fcced9bc63f79228",
-    "changes_from_baseline": "11 files: README, reviewer_analyses header, and exploratory evolved-design outputs. Executable reviewer_analyses AST unchanged; selector and paper-result inputs unchanged."
-  },
   "exploratory_evolved_design": {
     "checked_commit": "5076a63110f4a14bd8428942fcced9bc63f79228",
     "verification": "Re-evaluated frozen held-out designs, did not repeat evolution",
@@ -171,7 +166,7 @@
   },
   "literature_correction": {
     "CipherChat": "8 evaluated models: 2 primary plus 6 additional in Section 4.4/Table 4. Pass-09 two-model assertion withdrawn. Added scope footnote.",
-    "AWMT": "Seven-target count remains unverified; full-text check needed."
+    "AWMT": "Authors report full-text confirmation of seven targets: three in Table 4 and four in Table 5. Retained with a 50-instruction AdvBench Subset / MaliciousInstruct scope footnote. Full tables were not independently available in this audit."
   },
   "generation_provenance": {
     "collection_dates": {
@@ -197,7 +192,8 @@
           "written": "2026-09-10 09:53",
           "sha256_16": "5546c2c8f00404ad"
         }
-      }
+      },
+      "_evidence_scope": "Author-reported working-tree file modification times; these indicate file writes, not independently authenticated request or collection times. Matching content hashes do not validate timestamps."
     },
     "api_requests_as_sent": {
       "_method": "read from the batch manifests written at submission time, not from config/models.yaml",
@@ -256,14 +252,16 @@
     "evaluator_checkpoints_as_used": {
       "_method": "revision hashes read from the Hugging Face cache at /dpc/kuex0037/hf_cache",
       "cais/HarmBench-Llama-2-13b-cls": "bda705349d1144fa618770bea64d99ce54e3835b",
-      "meta-llama/Llama-Guard-3-8B": "7327bd9f6efbbe6101dc6cc4736302b3cbb6e425"
+      "meta-llama/Llama-Guard-3-8B": "7327bd9f6efbbe6101dc6cc4736302b3cbb6e425",
+      "_evidence_scope": "Author-reported cache revisions. Cache presence alone does not bind a checkpoint to a historical job; contemporaneous job-to-revision records were not supplied in this audit."
     },
     "target_checkpoints_as_used": {
       "meta-llama/Llama-2-7b-chat-hf": "f5db02db724555f92da89c216ac04704f23d4590",
       "meta-llama/Llama-3.1-8B-Instruct": "0e9e39f249a16976918f6564b8830bc894c89659",
       "Qwen/Qwen3-14B": "40c069824f4251a91eefaf281ebe4c544efd3e18",
       "mistralai/Ministral-3-8B-Instruct-2512": "5b26027e7b19eeb4b7352e1fed3926375dd2cb4d",
-      "_api_served": "gpt-5.1, gpt-5-mini and gpt-5-nano are API endpoints; no checkpoint hash exists and the provider did not return a resolved snapshot identifier in the stored manifests."
+      "_api_served": "gpt-5.1, gpt-5-mini and gpt-5-nano are API endpoints; no checkpoint hash exists and the provider did not return a resolved snapshot identifier in the stored manifests.",
+      "_evidence_scope": "Author-reported cache revisions, with the same historical job-binding limitation as the evaluator cache."
     },
     "pipeline_script_revisions": {
       "_caution": "The released versions of the generation scripts POSTDATE the caches they produced. The caches were written between 2026-08-07 and 2026-09-02; the commits that last touched these files are 2026-09-05 (b8955d0) and 2026-09-08 (67810db, 'Clean up for release: torch-free analysis, drop dead code'). The released code is therefore not byte-identical to what ran, and this should be stated rather than implied otherwise.",
@@ -276,8 +274,23 @@
         "decode_and_rejudge.py": "b8955d0 2026-09-05",
         "models/model_wrapper.py": "b8955d0 2026-09-05"
       },
-      "behavioural_difference_from_what_ran": "to be determined: see the diff check below"
+      "behavioural_difference_from_what_ran": "The public comparison b8955d0...67810db shows helper removal, loader extraction, and framing-list/module cleanup. Evaluator per-response label routines are unchanged in that comparison. The initial tracked snapshot postdates collection and is not a contemporaneous execution snapshot; historical runtime equivalence cannot be established by this comparison alone."
     }
   },
-  "_harvest": "recover_generation_manifest.sh run on /dpc/kuex0037/LIBRA, 2026-10-27"
+  "_harvest": "recover_generation_manifest.sh run on /dpc/kuex0037/LIBRA, 2026-10-27",
+  "previous_public_state_observed": {
+    "main": "ce5f32d10159dccbca9098e8f8fa5fbe1ba5ad76",
+    "revision-04": "5076a63110f4a14bd8428942fcced9bc63f79228",
+    "changes_from_baseline": "11 files: README, reviewer_analyses header, and exploratory evolved-design outputs. Executable reviewer_analyses AST unchanged; selector and paper-result inputs unchanged."
+  },
+  "public_state_observed": {
+    "main": "e3d71f132c5e9d8ae3c84d30cbce6bcd64175925",
+    "checked_on": "2026-10-27",
+    "scope": "Pinned repository input snapshot for this manifest; this is not a claim that an edited manifest hashes to that commit."
+  },
+  "historical_provenance_limitations": [
+    "API request-level settings and resolved snapshot identifiers were not persisted in the available records.",
+    "No contemporaneous version-controlled generation snapshot exists for the pre-first-commit runs.",
+    "Recovered file times and cached checkpoint revisions are author-reported provenance, with the evidence limits stated in generation_provenance."
+  ]
 }

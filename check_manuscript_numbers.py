@@ -127,15 +127,28 @@ def main() -> int:
                 want = float(star[internal]) * 100
                 record(f"Table 5 / {label} / c*",
                        "ok" if abs(cs - want) <= 0.06 else "MISMATCH", cs, want)
+            else:
+                record(f"Table 5 / {label} / c*", "UNPARSED")
 
     # ---- Table: screening-size sweep ------------------------------------
     rows = table_body(tex, "tab:ksweep")
     if rows is None:
         record("Table tab:ksweep", "NOT FOUND")
     else:
+        bybudget = {}
         for r in rows:
             b = num(r[0])
             if b is None or int(b) not in t6.index:
+                record("Table 6 / unexpected or unparsed budget", "UNPARSED")
+                continue
+            b = int(b)
+            if b in bybudget:
+                record(f"Table 6 / duplicate budget {b}", "UNPARSED")
+            bybudget[b] = r
+        for b in sorted(t6.index):
+            r = bybudget.get(b)
+            if r is None or len(r) != 6:
+                record(f"Table 6 / budget {b}", "NOT FOUND")
                 continue
             for d, cell in zip(T6_DESIGNS, r[1:6]):
                 got = num(re.sub(r"\$\^\{?\\?\*?\}?\$|\^\{\*\}|\\ast", "", cell))
@@ -211,6 +224,10 @@ def main() -> int:
     else:
         record("VI-A normalised regret pair", "NOT FOUND")
 
+    # The frozen manuscript check covers 79 entries. Missing coverage fails.
+    if len(results) != 79:
+        record(f"Expected 79 checks; located {len(results)}", "NOT FOUND")
+
     # ---- report ----------------------------------------------------------
     ok = sum(1 for _, s, *_ in results if s == "ok")
     bad = [r for r in results if r[1] == "MISMATCH"]
@@ -235,7 +252,7 @@ def main() -> int:
         print("\n  every located manuscript number matches the released results.")
     print("  Numbers reported as 'not located' were NOT checked: this script")
     print("  reads the .tex, so a reworded sentence hides its number from it.")
-    return 1 if bad else 0
+    return 1 if bad or miss else 0
 
 
 if __name__ == "__main__":

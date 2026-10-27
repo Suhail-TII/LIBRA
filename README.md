@@ -109,8 +109,7 @@ python check_manuscript_numbers.py --tex Chapters --results results
 | `check_manuscript_numbers.py` | checks the manuscript's own numbers against `results/` |
 
 Run `make_figures.py` and `make_tables.py` last: both read the CSVs the
-earlier scripts write. `make_tables.py` exits non-zero if any value in the
-manuscript fails to reproduce.
+earlier scripts write. `make_tables.py` exits non-zero if an embedded reference comparison fails.
 
 `libra_select.py` replays the grid: the procedure may query only
 (configuration, instruction) pairs that were actually measured, and receives the
