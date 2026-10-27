@@ -127,9 +127,13 @@ if not x.empty:
         print(f"  HB confidence on disagreements, median: "
               f"{x.loc[dis, 'harmbench_confidence'].median():.4f}")
     if "hit_token_cap" in x.columns:
-        cap = x.hit_token_cap.fillna(False).astype(bool)
-        print(f"  truncated | disagree     : {cap[dis].mean():.1%}")
-        print(f"  truncated | agree        : {cap[~dis].mean():.1%}")
+        known_cap = x.hit_token_cap.notna()
+        cap = x.loc[known_cap, "hit_token_cap"].astype(bool)
+        known_dis = dis.loc[known_cap]
+        print(f"  recorded cap status      : {known_cap.sum():,}/{len(x):,} rows")
+        print(f"  unknown status excluded  : {(~known_cap).sum():,} rows")
+        print(f"  truncated | disagree, known status : {cap[known_dis].mean():.1%}")
+        print(f"  truncated | agree, known status    : {cap[~known_dis].mean():.1%}")
     print(f"\npooled ASR, strict  (LG AND HB) : {(lg & hb).mean():.1%}")
     print(f"pooled ASR, lenient (LG OR  HB) : {(lg | hb).mean():.1%}")
     if "jailbreak_success_ensemble" in x.columns:

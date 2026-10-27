@@ -159,9 +159,13 @@ def section4(d):
         if "harmbench_confidence" in j:
             print(f"    HB median conf        {j.loc[dis,'harmbench_confidence'].median():.4f}")
         if "hit_token_cap" in j:
-            cap = j.hit_token_cap.fillna(False).astype(bool)
-            print(f"    truncated | disagree  {cap[dis].mean():.1%}")
-            print(f"    truncated | agree     {cap[~dis].mean():.1%}")
+            known_cap = j.hit_token_cap.notna()
+            cap = j.loc[known_cap, "hit_token_cap"].astype(bool)
+            known_dis = dis.loc[known_cap]
+            print(f"    recorded cap status   {known_cap.sum():,}/{len(j):,} rows")
+            print(f"    unknown excluded      {(~known_cap).sum():,} rows")
+            print(f"    truncated | disagree, known status {cap[known_dis].mean():.1%}")
+            print(f"    truncated | agree, known status    {cap[~known_dis].mean():.1%}")
         print(f"    strict                {(lg & hb).mean():.1%}")
         print(f"    lenient               {(lg | hb).mean():.1%}")
         if "jailbreak_success_ensemble" in j:
