@@ -1,0 +1,48 @@
+NOTICE -- third-party material
+==============================
+
+Source      L1B3RT4S, https://github.com/elder-plinius/L1B3RT4S
+Author      elder-plinius
+Licence     GNU Affero General Public License v3.0 (see LICENSE in this
+            directory)
+
+WHAT WAS TAKEN
+
+l1b3rt4s_attacks.py constructs the framing variants this project refers to as
+the plinius_* family, together with the distilled clean_* variants. It is a
+reimplementation of techniques documented in that corpus. Two of the framings
+retained in the final design space contain substantial reproduced text:
+
+    plinius_full_openai     derived from OPENAI.mkd; measured against the
+                            corpus, longest shared run 70 words, token
+                            Jaccard 0.828, sequence ratio 0.881
+    plinius_format_hijack   longest shared run 50 words, token Jaccard 0.699,
+                            sequence ratio 0.794
+
+A third, clean_openai, shares a 17-word run at Jaccard 0.337 and is described
+in the registry as a distilled variant.
+
+The remaining framings retained in the design space were measured against the
+same corpus and share runs of eight words or fewer:
+
+    plinius_l33tspeak 8, plinius_persona 5, libra_semantic_inv 3,
+    libra_style 1, and the struct_* family 1 to 2
+
+WHAT WAS CHANGED
+
+The prompts are parameterised to accept an arbitrary instruction, are assembled
+through a single class with fixed rather than randomised choices, and are
+rendered through each target's own chat template. Per-framing provenance notes
+are recorded in attacks/framing_registry.py.
+
+HOW THIS WAS MEASURED
+
+compare_framing_provenance.py in this repository reproduces the figures above
+against a clone of the corpus. It reports similarity scores only and prints no
+prompt text.
+
+SCOPE
+
+This directory is licensed under AGPL-3.0. The rest of this repository is MIT
+for code and CC BY 4.0 for the data files, as stated in LICENSE and
+LICENSE-DATA.

@@ -8,7 +8,7 @@ Sources
 -------
   attacks/libra_framings.py     8  the exp5 set (defined there, nowhere else)
   attacks/obfuscation_v2.py    18  StructuralObfuscator
-  attacks/l1b3rt4s_attacks.py  18  L1B3RT4SAttacks
+  third_party/l1b3rt4s/        18  L1B3RT4SAttacks (AGPL-3.0, see its NOTICE)
 
 Why this matters: the exp1 notes in obfuscation_v2.py record hypothetical at
 75.7% and multilayer at 75.3% on GPT, against l1b3rt4s_style at 41%. The
@@ -61,7 +61,7 @@ from typing import Callable, Dict, List, NamedTuple, Tuple
 
 from attacks.libra_framings import FRAMINGS as LIBRA_FRAMINGS
 from attacks.obfuscation_v2 import StructuralObfuscator
-from attacks.l1b3rt4s_attacks import L1B3RT4SAttacks, L1B3RT4SConfig
+from third_party.l1b3rt4s.l1b3rt4s_attacks import L1B3RT4SAttacks, L1B3RT4SConfig
 
 
 # ---------------------------------------------------------------------------

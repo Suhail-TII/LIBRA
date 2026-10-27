@@ -4,7 +4,7 @@ attacks/libra_framings.py
 Single source of truth for the LIBRA design space.
 
 Every experiment that touches framings or UTOS templates imports from here.
-Nothing defines prompts inline. Previously exp1 used attacks/l1b3rt4s_attacks.py,
+Nothing defines prompts inline. Previously exp1 used third_party/l1b3rt4s/l1b3rt4s_attacks.py,
 exp5 defined its own build_libra_prompts(), and exp6 mixed both -- three
 different prompt sets under identical variant names, which made their reported
 ASRs incommensurable.

@@ -391,4 +391,7 @@ content-filter errors.
 ## License
 
 Code: MIT. Data: CC BY 4.0.
+`third_party/l1b3rt4s/` is AGPL-3.0: it holds framings derived from the
+L1B3RT4S corpus, two of which contain substantial reproduced text. See that
+directory's NOTICE for provenance, measured overlap and modifications.
 AdvBench is redistributed under its original terms; see Zou et al. (2023).

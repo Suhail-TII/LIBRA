@@ -68,7 +68,11 @@ copy attacks/__init__.py            req
 copy attacks/framing_registry.py    req   # the 43-candidate pool and dedupe
 copy attacks/libra_framings.py      req   # 8 exp5 framings, 12 UTOS templates
 copy attacks/obfuscation_v2.py      req   # struct_* framings, imported above
-copy attacks/l1b3rt4s_attacks.py    req   # plinius_* framings, imported above
+copy third_party/__init__.py              req
+copy third_party/l1b3rt4s/__init__.py     req
+copy third_party/l1b3rt4s/l1b3rt4s_attacks.py req  # plinius_* framings, AGPL-3.0
+copy third_party/l1b3rt4s/LICENSE         req
+copy third_party/l1b3rt4s/NOTICE          req
 
 echo ""
 echo "── evaluation and generation ───────────────────────────────"

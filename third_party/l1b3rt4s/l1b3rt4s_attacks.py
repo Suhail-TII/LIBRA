@@ -1,4 +1,13 @@
 """
+Derived from the L1B3RT4S corpus (https://github.com/elder-plinius/L1B3RT4S),
+copyright elder-plinius, licensed under AGPL-3.0. See LICENSE and NOTICE in
+this directory for the licence text, the provenance of each framing and a
+description of the modifications.
+
+This file is AGPL-3.0. The rest of this repository is MIT; see ../../LICENSE.
+"""
+
+"""
 L1B3RT4S-Inspired Attack Module (v2 - Improved)
 
 Based on the L1B3RT4S repository by elder-plinius (Pliny the Liberator)
