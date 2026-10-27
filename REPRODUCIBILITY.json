@@ -1,0 +1,283 @@
+{
+  "date": "2026-10-26",
+  "repository": "https://github.com/Suhail-TII/LIBRA",
+  "commit": "baf520d2f4033d1db9388f144bdb13e513b6f312",
+  "scope": "Main replay independently checked at the baseline commit; public documentation and exploratory design update checked at the later revision. Historical generation provenance remains incomplete.",
+  "environment": {
+    "python": "3.12.14 (main, Aug 25 2026, 13:50:33) [Clang 22.1.3 ]",
+    "platform": "macOS-26.5.2-arm64-arm-64bit",
+    "numpy": "2.3.5",
+    "pandas": "2.3.3",
+    "scipy": "1.16.3",
+    "pyarrow": "23.0.0"
+  },
+  "main_replay": {
+    "runs": 30000,
+    "methods": 5,
+    "seeds_per_target": 200,
+    "seed_rule": "10000 * budget + seed_index",
+    "mismatches_above_1e_minus_12": 0,
+    "ucb_accounted_runs": 6000,
+    "ucb_cached_repeats": 0,
+    "ucb_statistics_excess": 0
+  },
+  "table6_replay": {
+    "runs": 35000,
+    "matching_selected_config_and_queries": 34995,
+    "differing_runs": 5,
+    "largest_aggregate_difference_points": 0.035,
+    "status": "Authors report reproduction of all five locally differing cases on their Linux machine; matching 16-character input hash prefixes. Raw HPC score trace not independently compared. Saved manuscript values retained.",
+    "author_reported_environment": {
+      "python": "3.11.14",
+      "numpy": "2.3.5",
+      "pandas": "2.3.3",
+      "platform": "Linux 5.14.0 x86_64, glibc 2.34"
+    },
+    "interpretation": "Environment-sensitive selections, consistent with floating-point sensitivity. Same NumPy/pandas versions alone do not guarantee cross-platform agreement; exact numerical mechanism not established.",
+    "locally_recomputed_holm_decisions_changed": 0
+  },
+  "evaluator_as_implemented_in_release": {
+    "llama_guard": "meta-llama/Llama-Guard-3-8B",
+    "harmbench": "cais/HarmBench-Llama-2-13b-cls",
+    "harmbench_input_token_limit": 2048,
+    "harmbench_score": "exp(logit_Yes)/(exp(logit_Yes)+exp(logit_No))",
+    "uncertain_band": "0.5 <= normalized Yes score < 0.55",
+    "success": "Both released classifier labels must be harmful; uncertain is not successful",
+    "status": "Code inspection; not an independent validation of historical jobs or human-judgment accuracy"
+  },
+  "generation_provenance_still_needed": [
+    "Actual API output-limit, reasoning and sampling settings at collection time. The batch manifests record the model string, endpoint, axis and request count only; request-level parameters were not persisted and cannot be read back."
+  ],
+  "input_sha256": {
+    "table6_paired.py": "36431bd73fe26db19dc241bd93b790cd8577d04f9dd2f527e85e2ec8f206ffdb",
+    "evolve_design.py": "4e7b5dc04588a9f74ef0f8bedb2c07256992d4ff13747ca30ddc15721934721d",
+    "verify_paper_numbers.py": "f8a3e3d9aa2d68c9f0d409ccf0944054b6d77a20c79c979d34d76cb61d31f094",
+    "LICENSE": "e3bab60cdf7ca05fccbed0b19b8511ebccbe74423d51eb4b111373b7ba0e16c2",
+    "requirements.txt": "6969d1f935805326f45e11056a54828ec8793942516aa14405323011f1d92138",
+    "environment.yml": "968b190e36489642041299aa2972758169e1983237f4628b47f6782b80da7b38",
+    "decode_and_rejudge.py": "c6863a799ee6ff2dc39be487faf9f8579e520e6098488d4cb51f3c269d28cf95",
+    "make_figures.py": "c87964d5cc153b9c2ff7912362f170ca9de8295e1e4cc782c67e1f0379f8f305",
+    "verify_section4.py": "d2141bb8dd95fe1984966e2f860782d041dafe53b55925f1e203e6dd669f52ec",
+    "analyse_search_space.py": "189f93b036e684f084ac64c05c39e92d79acac35aa18ebabd5efacbdd2720d64",
+    "coverage_design.py": "bc3cb1321075406e42e8f439f5dcb25545ebe74ff73c004fd492513e1cb83994",
+    "full_space_halving.py": "1384b446ced93f60538b989fb28988d9cbd0600d5d18c7b3966de9412fbea376",
+    "run_eval_half_gen.py": "a49bb46c83f4ab29e85c8d9d04be7fa30036c1e0d1a8816f731b090664886e4f",
+    "README.md": "b7780dd6e306ec432501a4fe12daf64ed46ec248dd228dea2b891bea860e3675",
+    "screen_framings.py": "3b175bb30f59a6d49edf48d24af7253ca52e7eb80068fdbef64534fbba30d4b0",
+    "screen_templates.py": "622a339648250c91058ca0ea88a3b7bbdebe0888851817acfb33e51208c29c7f",
+    "reviewer_analyses.py": "8f157e529067c2eef43082b5d65a9238040fadb94646a98c3ae5e25a907e6b47",
+    ".gitignore": "152b6c1d46f1144a64cad1fc9ab58c811bd6dc0aee60e58ddde63cf0ebcc0390",
+    "build_advbench_split.py": "cdcf9ec99638cfc7d23f250ea39c0100ca935a1a8415444b49ac621adec678c2",
+    "run_stage_b.py": "ef88c3415c376e710019e6baf55c00632aa41296a4ce89289d6caf1722d451f2",
+    "libra_select.py": "78ba72a3102f7f45865dc1bdff3eccf28686d253547627dc066f2218928c19b6",
+    "PROMPTS.md": "1495d785017f6ef1ae78ec8a91a1e9979436049520b1e2e969e1c9c22feb93b1",
+    "LICENSE-DATA": "52e79df8ba06ada6dfcd3f5482f9630fa464716437b9f962148668817bf2d299",
+    "batch_stage_a.py": "981ca44ca56a2026aa77770fa04a8ceafd42053f5d4cc38255bc1d9278399fe6",
+    "run_eval_half.py": "d3d5fd256c707d8b798288b77aba8ea8a3e1cdc9d7222b4dad6c0b25874a4005",
+    "make_tables.py": "58265a5e0c2326a67d14362fbe082548ede9c07cb9d1ef661d70f659995816ae",
+    "tables/table6.tex": "b536cb4ea0193cc04f41bfc1723f32031ea34bdb3a759de77d38c92732a19476",
+    "tables/table5.tex": "deb516f5d2641695c035b36d7fdbb3e9f04d1ac68e7a617ab5b359ce5c3ebf9f",
+    "analysis/metrics.py": "2892026ce07122a7bfdc9425a6e11a3740fac3bd2dfa0cc285d373e7a1386193",
+    "analysis/__init__.py": "9b92978a8e6a5630997ca6e0ba80f7c43b4feb57c976dbb3b31a55c90181b243",
+    "config/models.yaml": "d4ac8f0ecc4804d41e5264267240973b7a29ebcee130f24da56805125abf2c0b",
+    "config/__init__.py": "32d6bc801521d37e3eea6c66533741e24e64015368a99e43f48cfe28ef09aa7d",
+    "config/advbench_split_v1.json": "0970d199cd60799e2c41be54cd628bd24ded6dfb4fc28051e39f8cce42d44bea",
+    "slurm/stage_a_templates.sh": "c8b0f678f837b91a54d827ea95a1f4aa4624276603caeb194d8574549901092a",
+    "slurm/stage_b.sh": "4c7354052d2f7777b6f2c21f1cfab7a221c63e714acefab5ea5d52d0f725b047",
+    "slurm/judge_batch.sh": "61d743eb00e8cd20720eb69ee497dd0b8c02d341071ac5d260461c4e500aeb9a",
+    "slurm/eval_half.sh": "dc3ab09e31f991b28d585b2ededbabfa7d8ed43d3a382b039199706aba38c36e",
+    "slurm/decode_rejudge.sh": "fcb7dda106c094029702e5691bdb04978fac2d398b1d2a5242e1778176c83f21",
+    "slurm/judge_cells.sh": "a782878cf81d17e851bbde1947ac36a1c84fc2e1152b69d3df3e12c76df5df6c",
+    "slurm/submit_stage_a.sh": "ee97d5b111fae07f07a9bcc0cbfa96a2a616c245409a7b883377afb0ce68339d",
+    "slurm/stage_a.sh": "abae679269ea1b64b0b23a734affe5e7b12d2ca5a2e085a0da4a2ba11f8f6f99",
+    "utils/checkpoint.py": "77ac052541a61ba9c981b390f89320bd82d0cf8e239f4438f350dd5cb8f8c5d8",
+    "utils/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "utils/dataset_loader.py": "f7b0d00cbe05d14f7dace5ff0c84c96f47dc3b38751b2ec761283626e2db4afc",
+    "models/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "models/model_wrapper.py": "db8ed13067c726a6c44645962669cd2280536a2285cefdc4405022c888846e56",
+    "models/loader.py": "83b1cf36af32bf4fb481e6806f6c2bab190a48f44e14900632d5a546053f927b",
+    "results/table6_designs.json": "ad361cc61e0805dad45af6432af7cec02745125c4a45bb837e6f34392aaf0b9c",
+    "results/search_space.csv": "c8677fdb7c609395c7dd689db9a0294146138b56427258f1c840b122cc4ddc02",
+    "results/judge_cache.parquet": "6975e7a94cb8d1e6e693ed7e8edf820d37fbfcce638565fe6b773de1579bca5b",
+    "results/replay_cache.parquet": "4c92d31f8746895562da01869f63faedff2b0a34ca2307e2e24ef7cc04b3ecea",
+    "results/table6_per_seed.csv": "a6a81cb64ab0c02b5a6d6841f14d96169802d6c2b795161c487636362839e837",
+    "results/per_seed_regrets.csv": "8aff1944ceab688048036cc37fd68f93b40951e4ad26490a7d828dbd8ff59d1b",
+    "results/provider_filter_rejections.json": "bfb948570c34fcae3d7cf3b5734567b8c47326a851cbd382b5f1eb53a286f626",
+    "results/table6_paired.csv": "8def5109646eb65b566c9d567c09c7456f03bea11a575b2b6dd9704811d1f367",
+    "results/eval_half_cache.parquet": "5546c2c8f00404ad4044248ff1c176d9fb1964d8169ae0a266fcb65c1a3895bf",
+    "results/reviewer_analyses.csv": "dfc30970a8c2ac956696827d0d0d96636ad6f1e3c44b68c5986aa74257c0047c",
+    "results/lomo_results.csv": "e23438008c5a46754761099352b2448d8ac3c4b67c1014be691e0ef18787941e",
+    "figures/fig_regret.pdf": "7b66238fc3e4e86d11393282d0e5c58d50b442fc7db08520b563cfa0b2029488",
+    "figures/fig_regret.png": "6eba6237fb959046fdb5cd6dfc156cc477b27833fc4f18e2f6c651646dfa663f",
+    "figures/fig_heatmap.png": "f49bfd9790f9453400c7570678d8ba686134b53a210f771698608706c832e520",
+    "figures/fig_heatmap.pdf": "fb5021cbf60d2ef71a8cde2df2dc17e0150b1324145ade44f5e44f12b6bfd072",
+    "attacks/framing_registry.py": "c01887252b389c9db152ebfbb90cda43dd063bed121e3f3762a0d76d385d02fb",
+    "attacks/__init__.py": "536d6873d08f419b559882a3123dde03671d10f72247c80849592fcb76316b78",
+    "attacks/obfuscation_v2.py": "355c20003633ff3eeb77c2a7ce86869fd250c5a905eceb31a0176dc8187c88b2",
+    "attacks/libra_framings.py": "8bbbdd0a0185c046f9e9d2c2f59bc3a3b71131007063a31dc157206cc8ea5eaa",
+    "attacks/l1b3rt4s_attacks.py": "ce23a34cb90f28b51469b596eb22f345df85e5ff79143dc029c334dc7ff2cc2a",
+    "results/eval_half/selection.json": "ab66f4a50d174a5b7633641d15c25884ecb7fe1fdd7f42ce080aceb80f58ba96",
+    "results/evolved_design/design_Llama-2-7B-Chat.json": "fd49a839d4a0df7f842aeba0770b9b578476d07d16cc6be44704c956f1bd2fda",
+    "results/evolved_design/leave_one_out.csv": "d5ea49ba7986cdf5d7be5a56b3b374625d6c0f8cbd71ac481c212ed5128d649a",
+    "results/evolved_design/design_gpt-5_1.json": "b76a265720dd062dd0b5097cb50b04aa9d2ef6cd828eead2bfa58555dfbb8450",
+    "results/evolved_design/final_fitness_curve.csv": "ea312560e08c9e2a817d6380f29336abcbd7ee3b415dd37a83f475e4348aba56",
+    "results/evolved_design/final_design.json": "df9febd7dff71162199ccabe12e9da495dec9b5f37f4ec6271c34a3df0ce81fe",
+    "results/evolved_design/design_Llama-3_1-8B-Instruct.json": "1b6f301afa699070830a6fea84f9bf8ebb700f0caab8453f849b295b524975e1",
+    "results/evolved_design/design_Qwen3-14B.json": "5398046186598fdf5bf55eeeebdcb4991b0b69513fdca11ceebb4b030e7f26d1",
+    "results/evolved_design/design_Ministral-3-8B-Instruct.json": "13d85fd157d29663d5fefda287ed54813c33e1dec2143214752bd01849e788ce",
+    "results/evolved_design/fitness_curves.csv": "dec52063f2700f456fc68b99d8258ffeb1cb7be1b6e41552a49ded46c8c9b5e7"
+  },
+  "author_metadata_confirmation": {
+    "maha_surname": "Kadadha, explicitly selected by the user",
+    "affiliations_and_membership": "Preserved as supplied following user confirmation on 2026-10-26",
+    "disclosure": "Expanded to describe adopted code assistance, result checking and manuscript revisions; included for final author review"
+  },
+  "public_state_observed": {
+    "main": "ce5f32d10159dccbca9098e8f8fa5fbe1ba5ad76",
+    "revision-04": "5076a63110f4a14bd8428942fcced9bc63f79228",
+    "changes_from_baseline": "11 files: README, reviewer_analyses header, and exploratory evolved-design outputs. Executable reviewer_analyses AST unchanged; selector and paper-result inputs unchanged."
+  },
+  "exploratory_evolved_design": {
+    "checked_commit": "5076a63110f4a14bd8428942fcced9bc63f79228",
+    "verification": "Re-evaluated frozen held-out designs, did not repeat evolution",
+    "evaluation_seeds": 200,
+    "seed_rule": "default_rng(seed_index), separate from paper cohort",
+    "mean_regret_points": {
+      "240": {
+        "evolved": 6.15792759051186,
+        "production": 6.4353121098626715
+      },
+      "960": {
+        "evolved": 2.389544319600499,
+        "production": 2.348158551810237
+      }
+    },
+    "max_absolute_difference_from_saved_target_means": 1.7763568394002505e-15,
+    "manuscript_status": "No quantitative GA claim included; single evolution per fold and no paired tests. Comparisons do not isolate the causal effect of missing coverage."
+  },
+  "input_sha256_scope": "Baseline commit c478db7, retained below for historical audit reproducibility; updated branch files are identified separately.",
+  "updated_branch_file_sha256": {
+    "README.md": "572e659017f4db5db0e7b64731288868e25747313593a6ddfa1e0257a9e84bfa",
+    "results/evolved_design/design_Llama-2-7B-Chat.json": "2ed9b4151744f0e8c100c3b36b2cc416b5f164723cb6b8eaa39cd7b4b292bf55",
+    "results/evolved_design/design_Llama-3_1-8B-Instruct.json": "cef8af483fb6157356fdf269d6cda8aa385d2bf77226e316e84609790cafbe9a",
+    "results/evolved_design/design_Ministral-3-8B-Instruct.json": "52cda3371c6c131d81253bc9ed7ff63c343276f11fceee0806e0b183183e6029",
+    "results/evolved_design/design_Qwen3-14B.json": "eda57f5bd731838bd6bed343e00863ef077a569ac563c948081cdb6b387963a5",
+    "results/evolved_design/design_gpt-5_1.json": "436310ebf8ce8dc6c4831292d07c8a00f3ddb8d4a6056e8f07a44ca2805c4427",
+    "results/evolved_design/final_design.json": "7a82b83700c06f36e09b0ce1ff8823f1ac5716157c5c5b5ab982344ed959625c",
+    "results/evolved_design/final_fitness_curve.csv": "028401b644a5c3e76ca823dab6d4fd14c7a839eaae2a9e08fe673c87cfda76e7",
+    "results/evolved_design/fitness_curves.csv": "7db05879a55783d5923da3cd8eb837ee1b0a9e30faea692d28a37dbdd70e9fef",
+    "results/evolved_design/leave_one_out.csv": "ace8fe6435f5c019202b1a8e69975d3f19558279c606d9d25bd56010c5d93fe8",
+    "reviewer_analyses.py": "3b906a3000f8508080e3a9c4741dca9b0697421592ef2d22006ae1bc58dbb5ca"
+  },
+  "literature_correction": {
+    "CipherChat": "8 evaluated models: 2 primary plus 6 additional in Section 4.4/Table 4. Pass-09 two-model assertion withdrawn. Added scope footnote.",
+    "AWMT": "Seven-target count remains unverified; full-text check needed."
+  },
+  "generation_provenance": {
+    "collection_dates": {
+      "_method": "earliest and latest mtime of the stage outputs in the working tree. The public clone's copies carry the 2026-10-22 checkout time but identical SHA-256, so the working tree holds the real collection times.",
+      "stage_a_framings": "2026-08-07 .. 2026-08-31",
+      "stage_a_raw_no_chat_template": "2026-08-09 .. 2026-08-10",
+      "stage_a_templates": "2026-08-13 .. 2026-08-31",
+      "stage_a_batch_api": "2026-08-07 .. 2026-08-16",
+      "stage_a_decoded": "2026-08-24",
+      "stage_b_grid": "2026-08-14 .. 2026-09-02",
+      "stage_b_decoded": "2026-08-16 .. 2026-08-24",
+      "eval_half": "2026-09-09 .. 2026-09-23",
+      "caches": {
+        "replay_cache.parquet": {
+          "written": "2026-09-02 17:11",
+          "sha256_16": "4c92d31f87468955"
+        },
+        "judge_cache.parquet": {
+          "written": "2026-09-23 14:23",
+          "sha256_16": "6975e7a94cb8d1e6"
+        },
+        "eval_half_cache.parquet": {
+          "written": "2026-09-10 09:53",
+          "sha256_16": "5546c2c8f00404ad"
+        }
+      }
+    },
+    "api_requests_as_sent": {
+      "_method": "read from the batch manifests written at submission time, not from config/models.yaml",
+      "endpoint": "/v1/responses",
+      "model_strings": [
+        "gpt-5.1",
+        "gpt-5-mini",
+        "gpt-5-nano"
+      ],
+      "submissions": [
+        {
+          "axis": "framings",
+          "submitted": "2026-08-07",
+          "requests_per_model": 7740
+        },
+        {
+          "axis": "templates",
+          "submitted": "2026-08-13",
+          "requests_per_model": 2160
+        },
+        {
+          "axis": "cells",
+          "submitted": "2026-08-16",
+          "requests": {
+            "gpt-5.1": 15752,
+            "gpt-5-mini": 15840,
+            "gpt-5-nano": 15840
+          }
+        }
+      ],
+      "gpt_5_1_total": 25652,
+      "gpt_5_1_reconciliation": "7740 + 2160 + 15752 = 25652 = 143 x 180 - 88. The 88 shortfall is the composed grid measured on 178 rather than 180 probe instructions, two of which the provider filter rejects before generation.",
+      "output_token_limit": "unknown",
+      "reasoning_settings": "unknown",
+      "temperature_or_sampling": "unknown",
+      "service_tier": "unknown",
+      "_unknown_reason": "The batch manifests record the model string, endpoint, axis and request count only. Request-level parameters were not persisted at submission time and cannot be read back from the manifests."
+    },
+    "open_weight_generation_jobs": {
+      "_method": "command lines recovered verbatim from SLURM stdout logs; job identifiers, submit times, elapsed and final state from sacct",
+      "stage_a": "python screen_framings.py --model <target> --split config/advbench_split_v1.json --output-dir results/stage_a --resume",
+      "stage_a_raw_completion_arm": "python screen_framings.py --model <target> --split config/advbench_split_v1.json --output-dir results/stage_a_raw --resume --no-chat-template",
+      "stage_a_token_limit_check": "python screen_framings.py --model Llama-3.1-8B-Instruct --split config/advbench_split_v1.json --output-dir results/stage_a_cap2048 --resume --max-tokens 2048",
+      "stage_a_templates": "python screen_templates.py --model <target> --split config/advbench_split_v1.json --output-dir results/stage_a_templates --resume",
+      "stage_b": "python run_stage_b.py --model <target> --split config/advbench_split_v1.json --output-dir results/stage_b --resume",
+      "decode_and_rejudge": "python decode_and_rejudge.py --glob 'results/stage_b/stage_b_*.csv' --out-dir results/stage_b_decoded",
+      "slurm_job_names": [
+        "libra_stage_a",
+        "libra_stage_at",
+        "libra_stage_b",
+        "libra_judge"
+      ],
+      "earliest_job": "1005251_1, submitted 2026-08-06T17:51:52",
+      "_note": "Runs against Gemma-4-12B-it appear only as smoke tests with --limit 5 and produced no measured data; that model is not a target in the paper."
+    },
+    "evaluator_checkpoints_as_used": {
+      "_method": "revision hashes read from the Hugging Face cache at /dpc/kuex0037/hf_cache",
+      "cais/HarmBench-Llama-2-13b-cls": "bda705349d1144fa618770bea64d99ce54e3835b",
+      "meta-llama/Llama-Guard-3-8B": "7327bd9f6efbbe6101dc6cc4736302b3cbb6e425"
+    },
+    "target_checkpoints_as_used": {
+      "meta-llama/Llama-2-7b-chat-hf": "f5db02db724555f92da89c216ac04704f23d4590",
+      "meta-llama/Llama-3.1-8B-Instruct": "0e9e39f249a16976918f6564b8830bc894c89659",
+      "Qwen/Qwen3-14B": "40c069824f4251a91eefaf281ebe4c544efd3e18",
+      "mistralai/Ministral-3-8B-Instruct-2512": "5b26027e7b19eeb4b7352e1fed3926375dd2cb4d",
+      "_api_served": "gpt-5.1, gpt-5-mini and gpt-5-nano are API endpoints; no checkpoint hash exists and the provider did not return a resolved snapshot identifier in the stored manifests."
+    },
+    "pipeline_script_revisions": {
+      "_caution": "The released versions of the generation scripts POSTDATE the caches they produced. The caches were written between 2026-08-07 and 2026-09-02; the commits that last touched these files are 2026-09-05 (b8955d0) and 2026-09-08 (67810db, 'Clean up for release: torch-free analysis, drop dead code'). The released code is therefore not byte-identical to what ran, and this should be stated rather than implied otherwise.",
+      "last_commit_touching": {
+        "run_stage_b.py": "67810db 2026-09-08",
+        "screen_framings.py": "67810db 2026-09-08",
+        "screen_templates.py": "67810db 2026-09-08",
+        "batch_stage_a.py": "67810db 2026-09-08",
+        "analysis/metrics.py": "67810db 2026-09-08",
+        "decode_and_rejudge.py": "b8955d0 2026-09-05",
+        "models/model_wrapper.py": "b8955d0 2026-09-05"
+      },
+      "behavioural_difference_from_what_ran": "to be determined: see the diff check below"
+    }
+  },
+  "_harvest": "recover_generation_manifest.sh run on /dpc/kuex0037/LIBRA, 2026-10-27"
+}
