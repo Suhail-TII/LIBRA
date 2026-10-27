@@ -13,26 +13,35 @@ the plinius_* family, together with the distilled clean_* variants. It is a
 reimplementation of techniques documented in that corpus. Two of the framings
 retained in the final design space contain substantial reproduced text:
 
-    plinius_full_openai     derived from OPENAI.mkd; measured against the
-                            corpus, longest shared run 70 words, token
-                            Jaccard 0.828, sequence ratio 0.881
-    plinius_format_hijack   longest shared run 50 words, token Jaccard 0.699,
-                            sequence ratio 0.794
-
-A third, clean_openai, shares a 17-word run at Jaccard 0.337 and is described
-in the registry as a distilled variant.
+    plinius_full_openai     registry records derivation from OPENAI.mkd;
+                            longest shared run 70 words, closest block
+                            ANTHROPIC.mkd, token Jaccard 0.828, sequence
+                            ratio 0.881
+    plinius_format_hijack   longest shared run 50 words, closest block
+                            ANTHROPIC.mkd, token Jaccard 0.699, sequence
+                            ratio 0.794
 
 A third, clean_openai, is an adaptation of a cleaned variant from the same
 corpus. The registry records its derivation, which is the basis for crediting
 it, rather than the measured overlap: it shares a 17-word run at token Jaccard
 0.337.
 
-The following framings retained in the design space were measured against the
-same corpus and share runs of eight words or fewer:
+The following framings retained in the design space were measured against
+every block in the corpus and share runs of eight words or fewer:
 
-    plinius_l33tspeak 8, plinius_persona 5, libra_semantic_inv 3,
-    libra_style 1, struct_attention_frag 2, struct_poetic_obfusc 2,
-    struct_refusal_suppress 2
+    plinius_l33tspeak 8, plinius_persona 5, libra_style 5,
+    struct_refusal_suppress 4, libra_semantic_inv 3,
+    struct_attention_frag 3, struct_poetic_obfusc 3
+
+The four UTOS templates were measured on the same basis and share runs of
+three words:
+
+    data_dictionary 3, html_table 3, json 3, latex_table 3
+
+Every figure in this NOTICE is a maximum over all 398 corpus blocks. An earlier
+revision reported runs computed only against the three blocks closest by token
+Jaccard; those were lower bounds. The two long passages are unchanged under the
+corpus-wide search; three of the short figures rose by one to four words.
 
 NOT ASSESSED
 

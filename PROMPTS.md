@@ -11,8 +11,10 @@ These are the prompts behind every number in the paper. They instantiate
 publicly documented technique families, and their provenance differs by
 framing. The `plinius_*` and `clean_*` variants derive from the L1B3RT4S
 corpus; two of those retained in the design space keep substantial upstream
-wording, and one is an adaptation of a cleaned variant. The `struct_*`
-variants adapt the structural obfuscations of StructuralSleight. See
+wording, and one is an adaptation of a cleaned variant. The four UTOS
+templates reimplement structures from StructuralSleight (Li et al., 2025), as
+recorded in `attacks/libra_framings.py`. The `struct_*` framings carry no
+recorded external source in this release. See
 `third_party/l1b3rt4s/NOTICE` for the source, the measured overlap of each
 framing, the modifications and the comparison method. Generated completions
 are not released.
