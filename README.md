@@ -334,11 +334,13 @@ output
 
 ## Notes for anyone re-running the measurement
 
-**Chat templating is not optional.** A prompt submitted as a raw completion is
-not the prompt a deployed model receives. On Llama-2-7B one framing reaches 100%
-attack success without the template and 0% with it. `model_wrapper.py` applies
-each model's own template by default; `--no-chat-template` reproduces the
-raw-completion arm.
+**Report the generation interface.** Raw completion and native chat templating
+are different input conditions. In the archived Llama-2-7B-Chat diagnostic,
+the technical-manual framing has 350 strict successes among 360 raw-completion
+records (97.2%) and none among 180 templated records. These groups have different
+sample sizes; the counts alone do not establish a matched comparison.
+`model_wrapper.py` applies each model's native template by default;
+`--no-chat-template` enables raw-completion mode.
 
 **Two targets need a different environment.** Ministral-3-8B requires
 `mistral-common` and a recent `transformers` for `MistralCommonBackend`. Pass
@@ -348,8 +350,9 @@ raw-completion arm.
 generation. Both fall in the probe half, so API-served targets are measured on
 178 probe instructions and all 340 evaluation instructions.
 
-**Reasoning traces are stripped before scoring.** Two targets emit them, and
-they frequently restate the harmful request while deliberating about it.
+**Only answer text is scored.** Explicitly delimited reasoning segments are
+removed for Qwen3-14B. For GPT-5.1, the batch parser extracts answer text from
+message output items and excludes other response items.
 
 **SLURM scripts are site-specific.** Set `SLURM_ACCOUNT`, and optionally
 `SLURM_MAIL`, `PROJECT_DIR` and `HF_HOME`. Partition names and module load lines
@@ -359,11 +362,11 @@ will need editing.
 
 ## Ethics
 
-This work characterizes an attack surface in order to inform defense. All
-experiments use AdvBench, an established public benchmark, so no new harmful
-content is introduced. Target models are accessed through their standard
-interfaces without modification to weights, system prompts, or safety training.
-We release the labels rather than the generations.
+This work characterizes an attack surface in order to inform defense. The
+evaluated behaviors are drawn from AdvBench, a public benchmark. Model weights
+and safety training are not modified; the generation protocol is described in
+the paper and release documentation. We release per-response classifier labels
+rather than generated completions.
 
 Researchers reproducing the measurement should expect to trigger provider-side
 safety systems. We received a usage-policy warning during this work; the
