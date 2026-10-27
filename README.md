@@ -25,10 +25,13 @@ first path needs no GPU, no model weights, and no API key. The second path
 regenerates those caches from scratch.
 
 `make_tables.py` re-derives 99 reference values from the released CSVs and
-reports PASS or FAIL against each. Read what it is precisely: it compares the
-CSV-derived values against constants transcribed into the script, not against
-the manuscript source. It does not parse the `.tex` files, so it catches drift
-in the data or the code, not an edit to a number in the paper.
+reports PASS or FAIL against each, exiting non-zero if any fails. Read what it
+is precisely: it compares CSV-derived values against reference constants
+embedded in the script. **It does not parse the manuscript's TeX**, so it
+catches drift in the data or the code, not an edit to a number in the paper.
+`check_manuscript_numbers.py` is the complement: it reads the `.tex`,
+recomputes each located entry from `results/`, and reports anything it could
+not locate rather than skipping it.
 
 ---
 
@@ -91,6 +94,7 @@ python table6_paired.py --seeds 200                         # Table 6
 python run_eval_half.py --analyse                           # probe/eval check
 python make_figures.py --outdir figures                     # Figures 2 and 3
 python make_tables.py                                       # Tables 5 and 6
+python check_manuscript_numbers.py --tex Chapters --results results
 ```
 
 | script | produces |
@@ -102,6 +106,7 @@ python make_tables.py                                       # Tables 5 and 6
 | `run_eval_half.py --analyse` | probe vs held-out evaluation comparison |
 | `make_figures.py` | `figures/fig_heatmap.pdf` (Figure 2), `figures/fig_regret.pdf` (Figure 3) |
 | `make_tables.py` | `tables/table5.tex`, `tables/table6.tex`, **and the 99-value reference check** |
+| `check_manuscript_numbers.py` | checks the manuscript's own numbers against `results/` |
 
 Run `make_figures.py` and `make_tables.py` last: both read the CSVs the
 earlier scripts write. `make_tables.py` exits non-zero if any value in the
@@ -109,7 +114,14 @@ manuscript fails to reproduce.
 
 `libra_select.py` replays the grid: the procedure may query only
 (configuration, instruction) pairs that were actually measured, and receives the
-recorded outcome. Runs are exact and repeated seeds are free.
+recorded outcome. Replay needs no new target queries and repeated seeds are
+free. Reproduction is not bit-exact across platforms: an independent replay on
+a different machine, with the same numpy and pandas versions, matched all
+30,000 main-method runs but differed on 5 of the 35,000 Table 6 selections,
+moving four aggregate cells by at most 0.035 points and changing no
+significance decision. All five reproduce on the machine that wrote the CSV.
+The mechanism is consistent with floating-point accumulation order but has not
+been established.
 
 Results in the paper average 200 seeds. Running with fewer will differ by a few
 tenths of a percentage point and may show small non-monotonicities in the budget
@@ -142,23 +154,44 @@ substituting one we did not run. We make no claim about which was constructed
 first: a different generator output establishes non-reproduction, not
 chronology. The exhaustive grid of Section IV contains both orders for
 every framing-template pair, so the order result there is unaffected.
-Section V-F measures what the gap costs.
+Section V-F compares the archived subset with particular alternative designs.
+It does not isolate the causal cost of the four missing pairs: an alternative
+design changes which cells are sampled as well as how many pairs are covered.
 
 `table6_paired.py` sweeps the screening size against budget and compares
 coverage-optimised designs against the one we use, with Holm-adjusted paired
 tests over seed blocks. Every design's exact cell list and SHA-256 are written
 to `results/table6_designs.json` before anything uses them.
 
-`evolve_design.py` and `results/evolved_design/` are **legacy exploratory
-material and are not evidence for anything in the paper.** The script asks
-whether a design chosen by regret rather than by a structural criterion would
-do better, evolving on four targets and measuring on the fifth. The archived
-`leave_one_out.csv` in that folder does **not** reproduce under the released
-selector at either 30 or 200 evaluation seeds, under either a zero-based or a
-budget-offset seed rule, so the selector revision, job arguments, seed counts,
-seed rule, cache hashes and coverage-penalty lambda behind it are not
-established. Nothing in the manuscript rests on it, and it should not be cited
-as evidence that greater pair coverage cannot help.
+`evolve_design.py` and `results/evolved_design/` are **exploratory and are not
+evidence for anything in the paper.** The script asks whether a design chosen
+by fitness rather than by a structural criterion would do better. Fitness is
+regret plus a coverage penalty, `lam` points per missing pair, so it is not a
+pure regret objective. It evolves on four targets and measures on the fifth,
+rotating across all five.
+
+The results in that folder were produced with the released selector by
+
+```bash
+python3 evolve_design.py --lam 0.25 --final
+```
+
+using 30 training seeds, 200 evaluation seeds and the script's own
+`default_rng(seed)` rule, which is **not** the `10000 * budget + seed` rule the
+paper's results use. The outcome is mixed and supports no conclusion in either
+direction: at 240 queries the evolved designs average 6.16 points against the
+production design's 6.44 and win on three of five held-out targets, while at
+960 they average 2.39 against 2.35 and win on one of five. Those are the
+zero-based cohort's figures and are not the paper's 6.43 and 2.29, which come
+from the budget-offset cohort; the two must not be mixed. It is a single run
+per fold with no paired tests.
+
+An earlier version of this folder, produced in September against the selector
+as it stood before the budget-cap and stable-tie fixes, reported the opposite
+sign at 240. It is not in this repository. Do not cite either version as
+evidence that greater pair coverage cannot help: the evolved designs reach 21
+or 22 of the 22 framing-order pairs where the production design reaches 18, and
+at the lower budget they do better, which is consistent with Table 6.
 
 `results/evolved_design/final_design.json` is a *different* 22-cell list
 (SHA-256 `da7b9f8a7b97`, against the production design's `f75b5ca49866`) and is
@@ -269,7 +302,7 @@ results/
   eval_half_cache.parquet the held-out evaluation half for the selected configs
   per_seed_regrets.csv    every run behind Figure 3 and Table 5
   table6_*.{csv,json}     the screening-size sweep, its tests, its designs
-  evolved_design/         the evolved-design negative result
+  evolved_design/         exploratory results, not used in the paper
 
 measurement
   screen_framings.py      Stage A
@@ -287,7 +320,7 @@ analysis
   full_space_halving.py   the no-screening baseline
   table6_paired.py        Table 6, the screening-size sweep with paired tests
   coverage_design.py      the screening-design generator
-  evolve_design.py        the evolved-design negative result
+  evolve_design.py        exploratory, not used in the paper
   run_eval_half.py        probe/eval selection and comparison
   verify_paper_numbers.py cross-checks across the sweeps
   analyse_search_space.py Section IV from the raw CSVs (not released)
@@ -295,6 +328,7 @@ analysis
 output
   make_figures.py         Figures 2 and 3
   make_tables.py          Tables 5 and 6, and the 99-value reference check
+  check_manuscript_numbers.py  reads the .tex and checks it against results/
 ```
 
 ---
