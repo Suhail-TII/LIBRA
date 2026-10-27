@@ -108,10 +108,14 @@ copy run_eval_half.py         req   # probe/eval check: selection and analysis
 copy run_eval_half_gen.py     req   # probe/eval check: generation
 copy make_figures.py          req   # the two paper figures
 copy make_tables.py           req   # Tables V and VI, and the number check
+copy check_manuscript_numbers.py req  # the manuscript's own numbers vs results/
 copy verify_paper_numbers.py
 # only needed if reviewer_analyses.py imports it rather than defining
 # bl_successive_halving itself, so not marked required
 copy full_space_halving.py
+# exploratory, not used in the paper, but the README describes it and a
+# rebuild must not silently drop what the README points a reader at
+copy evolve_design.py
 
 echo ""
 echo "── repository hygiene ──────────────────────────────────────"
@@ -148,6 +152,7 @@ copy results/per_seed_regrets.csv  req
 copy results/table6_per_seed.csv   req
 copy results/table6_paired.csv     req
 copy results/table6_designs.json   req
+copy results/evolved_design
 
 echo ""
 echo "── generated outputs ───────────────────────────────────────"
@@ -157,11 +162,18 @@ copy figures
 copy tables
 
 echo ""
+echo "── environment ─────────────────────────────────────────────"
+copy environment.yml    req
+copy requirements.txt   req   # carries pyarrow, without which the parquet
+                              # caches cannot be opened
+
+echo ""
 echo "── documentation ───────────────────────────────────────────"
 copy README.md      req
 copy LICENSE        req
 copy LICENSE-DATA
 copy PROMPTS.md     req   # the full framing and template text
+copy REPRODUCIBILITY.json  req   # the generation and evaluation manifest
 
 # ── generated files ──────────────────────────────────────────────
 mkdir -p "$DST/results"

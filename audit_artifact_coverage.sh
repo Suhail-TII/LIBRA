@@ -34,6 +34,14 @@ set -euo pipefail
 #   clone that gets pushed. GAP needs SRC under git; when it is not, that
 #   section is skipped and BROKEN and ORPHAN still run. ORPHAN is the one
 #   that answers "is rsync --delete safe", and it needs no git at all.
+FULL=0
+ARGS=()
+for arg in "$@"; do
+    [[ "$arg" == "--full" ]] && { FULL=1; continue; }
+    ARGS+=("$arg")
+done
+set -- ${ARGS[@]+"${ARGS[@]}"}
+
 SRC="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 ART="${1:-}"
 if [[ "${1:-}" == "--src" ]]; then
@@ -57,17 +65,19 @@ grep -E '^[[:space:]]*copy[[:space:]]+' "$SCRIPT" \
   | sed -E 's/^[[:space:]]*copy[[:space:]]+([^[:space:]]+).*/\1/' \
   | sort -u > "$TMP/listed"
 
+# written by make_artifact.sh itself rather than copied, so not an orphan
+GENERATED=".gitignore"
+
 # editor and patch backups are never publication candidates
 if (( HAVE_GIT )); then
     git -C "$SRC" ls-files \
       | grep -Ev '\.(bak[0-9]*|orig|rej|swp)$|~$' \
+      | grep -Fxv "$GENERATED" \
       | sort -u > "$TMP/tracked"
 else
     : > "$TMP/tracked"
 fi
 
-# written by make_artifact.sh itself rather than copied, so not an orphan
-GENERATED=".gitignore"
 
 # a listed directory publishes everything under it, so expand before diffing
 : > "$TMP/covered"
@@ -102,12 +112,34 @@ elif [[ "$n_gap" -eq 0 ]]; then
     echo "  none"
 else
     echo "══ GAP: tracked in git, not published ($n_gap) ═══════════════════════"
+    echo "  A working tree carries abandoned experiments, raw results and logs"
+    echo "  that make_artifact.sh exists to leave behind, so a large number"
+    echo "  here is expected and is not itself a problem."
+    echo ""
     # group by top-level directory so the shape of the gap is visible
     awk -F/ '{ print (NF>1 ? $1 : ".") }' "$TMP/gap" | sort | uniq -c \
-      | sort -rn | awk '{ printf "  %4d  %s/\n", $1, $2 }'
+      | sort -rn | awk '{ printf "  %5d  %s\n", $1, ($2=="." ? "(top level)" : $2"/") }'
+
+    # top-level files are the publication candidates worth a human decision;
+    # a file buried under results/ or logs/ almost never is
+    grep -v / "$TMP/gap" > "$TMP/gap_top" || true
+    n_top=$(wc -l < "$TMP/gap_top")
     echo ""
-    echo "  full list:"
-    sed 's/^/    /' "$TMP/gap"
+    echo "  top-level files, the ones worth a decision ($n_top):"
+    if [[ "$n_top" -eq 0 ]]; then
+        echo "    none"
+    else
+        sed 's/^/    /' "$TMP/gap_top"
+    fi
+    if (( FULL )); then
+        echo ""
+        echo "  everything else:"
+        grep / "$TMP/gap" | sed 's/^/    /'
+    elif [[ $((n_gap - n_top)) -gt 0 ]]; then
+        echo ""
+        echo "  $((n_gap - n_top)) further files under the directories above;"
+        echo "  re-run with --full to list them."
+    fi
 fi
 
 # ── BROKEN ──────────────────────────────────────────────────────────────────
