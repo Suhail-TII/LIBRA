@@ -101,7 +101,7 @@ def fig_regret(results_csv: str, outdir: Path, seeds_csv: str | None = None):
         "full_space_halving": dict(color="#6a3d9a", marker="d",
                                    ls=(0, (3, 1, 1, 1))),
     }
-    label = {"LIBRA": "LIBRA", "singles_sweep": "Singles sweep",
+    label = {"LIBRA": "LIBRA-S", "singles_sweep": "Singles sweep",
              "ucb": "UCB1", "random": "Random search",
              "full_space_halving": "Full-space halving"}
  

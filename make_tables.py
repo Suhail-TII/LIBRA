@@ -172,14 +172,16 @@ def table5(d: dict, budget: int, out: Path) -> pd.DataFrame:
     keys = [k for k, _ in SERIES]
     lines = [
         r"\begin{table}[!t]", r"\centering",
-        r"\caption{Per-target regret at " + str(budget) + r" queries. Every "
+        r"\caption{Per-target regret at " + str(budget) + r" queries. Regret "
+        r"entries are means over "
+        + str(int(ps[ps.budget == budget].seed.nunique())) + r" runs. Every "
         r"baseline forfeits more than ten points on at least one target. The "
-        r"procedure's regret spans $%.2f$ to $%.2f$ points and is the only "
-        r"method that stays within four points everywhere.}",
+        r"procedure's mean regret ranges from $%.2f$ to $%.2f$ points and is the "
+        r"only method whose per-target mean remains within four points everywhere.}",
         r"\label{tab:regret_perfold}", r"\footnotesize",
         r"\setlength{\tabcolsep}{3pt}",
         r"\begin{tabular}{@{}l r r r r r r@{}}", r"\toprule",
-        r"Target & $c^{\star}$ & LIBRA & \makecell{Full-space\\halving} & "
+        r"Target & $c^{\star}$ & LIBRA-S & \makecell{Full-space\\halving} & "
         r"\makecell{Singles\\sweep} & UCB1 & \makecell{Random\\search} \\",
         r"\midrule",
     ]
@@ -236,8 +238,8 @@ def table6(d: dict, out: Path) -> pd.DataFrame | None:
         r"\begin{table}[!t]", r"\centering",
         r"\caption{Mean regret in points across the five targets, sweeping the",
         r"screening size against budget. $\mathcal{S}^{\dagger}$ is the design the",
-        r"procedure uses; the others are constructed at each size to maximise pair",
-        r"coverage. Parenthesised values are distinct (framing, order) pairs out of 22.",
+        r"procedure uses; the others are constructed at each size to maximize pair",
+        r"coverage. Parenthesized values are distinct (framing, order) pairs out of 22.",
         r"$^{*}$ marks a paired difference from $\mathcal{S}^{\dagger}$ over "
         + str(int(ps.seed.nunique())) + r" seed",
         r"blocks that survives Holm adjustment across all " + str(n_comp)

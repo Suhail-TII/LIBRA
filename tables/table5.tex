@@ -1,12 +1,12 @@
 \begin{table}[!t]
 \centering
-\caption{Per-target regret at 960 queries. Every baseline forfeits more than ten points on at least one target. The procedure's regret spans $1.54$ to $3.11$ points and is the only method that stays within four points everywhere.}
+\caption{Per-target regret at 960 queries. Regret entries are means over 200 runs. Every baseline forfeits more than ten points on at least one target. The procedure's mean regret ranges from $1.54$ to $3.11$ points and is the only method whose per-target mean remains within four points everywhere.}
 \label{tab:regret_perfold}
 \footnotesize
 \setlength{\tabcolsep}{3pt}
 \begin{tabular}{@{}l r r r r r r@{}}
 \toprule
-Target & $c^{\star}$ & LIBRA & \makecell{Full-space\\halving} & \makecell{Singles\\sweep} & UCB1 & \makecell{Random\\search} \\
+Target & $c^{\star}$ & LIBRA-S & \makecell{Full-space\\halving} & \makecell{Singles\\sweep} & UCB1 & \makecell{Random\\search} \\
 \midrule
 GPT-5.1         & 23.6\% & 2.42 & \textbf{1.59} & 19.29 & 3.24 & 4.35 \\
 Llama-2-7B      & 30.0\% & \textbf{3.11} & 10.17 & 18.64 & 10.06 & 10.86 \\

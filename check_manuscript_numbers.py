@@ -92,6 +92,10 @@ def main() -> int:
 
     texdir, res = Path(a.tex), Path(a.results)
     tex = "\n".join(p.read_text(errors="replace") for p in sorted(texdir.glob("*.tex")))
+    # Drop LaTeX comments before matching. A commented-out earlier draft
+    # carries its own \\label and its own figures, and whichever copy comes
+    # first in the file is the one this script would otherwise check.
+    tex = re.sub(r"(?m)(?<!\\)%.*$", "", tex)
     if not tex.strip():
         sys.exit(f"no .tex found under {texdir}")
 
@@ -177,7 +181,7 @@ def main() -> int:
         (r"within \$6\.(\d)\$ points of the optimum", "LIBRA", 240, 6),
         (r"19\\times\$ fewer, within \$2\.(\d)\$ points", "LIBRA", 960, 2),
         (r"singles sweep has lower aggregate mean regret: \$12\.(\d)\$ points"
-         r" against LIBRA's \$1(\d)\.(\d)\$", None, None, None),
+         r" against LIBRA-S's \$1(\d)\.(\d)\$", None, None, None),
         (r"costs \$40\.(\d)\$ points at 120 queries", "full_space_halving", 120, 40),
         (r"and \$7\.(\d)\$ at 240", "full_space_halving", 240, 7),
         (r"closes to \$2\.(\d)\$ at 960", "full_space_halving", 960, 2),
