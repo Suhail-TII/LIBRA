@@ -31,8 +31,9 @@ from matplotlib.colors import LinearSegmentedColormap
 from matplotlib.ticker import NullFormatter, NullLocator
 from matplotlib.patches import Patch
 
-POOL = ["Llama-2-7B-Chat", "Llama-3.1-8B-Instruct", "Qwen3-14B",
-        "gpt-5.1", "Ministral-3-8B-Instruct"]
+# Column order matches Tables 2 to 5, which all lead with GPT-5.1.
+POOL = ["gpt-5.1", "Llama-2-7B-Chat", "Llama-3.1-8B-Instruct",
+        "Qwen3-14B", "Ministral-3-8B-Instruct"]
 SHORT = {"Llama-2-7B-Chat": "Llama-2-7B",
          "Llama-3.1-8B-Instruct": "Llama-3.1-8B",
          "Qwen3-14B": "Qwen3-14B",
@@ -193,10 +194,16 @@ def fig_heatmap(cache: str, outdir: Path):
                handleheight=0.9, labelspacing=0.3, borderpad=0)
     axl.set_ylabel("103 configurations, ordered by mean ASR", fontsize=7.5)
 
-    im = ax.imshow(a.values, aspect="auto", cmap=cmap, vmin=0, vmax=100)
+    # Each column is scaled to its own maximum. On a shared 0-100 scale the
+    # two low-ceiling targets are nearly white and the rank disagreement this
+    # figure exists to show cannot be seen in those columns. The absolute
+    # maximum moves into the column label instead of being lost.
+    colmax = a.max(axis=0)
+    rel = a.divide(colmax, axis=1) * 100
+    im = ax.imshow(rel.values, aspect="auto", cmap=cmap, vmin=0, vmax=100)
     ax.set_xticks(range(len(POOL)))
-    ax.set_xticklabels([SHORT[m] for m in POOL], rotation=35,
-                       ha="right", fontsize=7)
+    ax.set_xticklabels([f"{SHORT[m]}\n(max {colmax[m]:.1f}%)" for m in POOL],
+                       rotation=35, ha="right", fontsize=7)
     ax.set_yticks([])
     for s in ax.spines.values():
         s.set_linewidth(0.4)
@@ -206,11 +213,19 @@ def fig_heatmap(cache: str, outdir: Path):
         i = int(np.argmax(a[m].values))
         # clip_on=False: the optima for two targets are in the first
         # two rows, and the top spine cut those stars in half
-        ax.plot(j, i, marker="*", ms=7, color="#8c2f1f",
-                mec="white", mew=0.5, zorder=5, clip_on=False)
+        # After per-column scaling the optimum is always its column's
+        # maximum, so the cell beneath the star is always the darkest shade
+        # and the white edge always contrasts with it.
+        ax.plot(j, i, marker="*", ms=9, color="#8c2f1f",
+                mec="white", mew=0.7, zorder=5, clip_on=False)
+
+    # Two optima sit in the first rows; give the stars headroom so they
+    # do not overhang the top spine.
+    ax.set_ylim(len(a) - 0.5, -1.4)
 
     cb = fig.colorbar(im, ax=ax, fraction=0.05, pad=0.03)
-    cb.set_label("Attack success rate (%)", fontsize=7.5)
+    cb.set_label("Attack success, % of each target's maximum",
+                 fontsize=7.5)
     cb.ax.tick_params(labelsize=6.5, width=0.5)
     cb.outline.set_linewidth(0.4)
 
