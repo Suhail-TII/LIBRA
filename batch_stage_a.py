@@ -46,9 +46,10 @@ import argparse
 import json
 import subprocess
 import sys
+import time
 from datetime import datetime
 from pathlib import Path
-from typing import Dict
+from typing import Dict, List
 
 import pandas as pd
 from tqdm import tqdm
@@ -121,7 +122,7 @@ def extract_usage(body: dict) -> dict:
         "n_reasoning_tokens": det.get("reasoning_tokens") if isinstance(det, dict) else None,
     }
 
-def _axis_items(axis: str, dedupe_threshold: float = 0.90):
+def _axis_items(axis: str, dedupe_threshold: float = 0.90, only=None):
     """
     Return (label_columns, {key: render_fn}, {key: extra_metadata}).
 
@@ -131,15 +132,25 @@ def _axis_items(axis: str, dedupe_threshold: float = 0.90):
     open-weight runner.
     """
     if axis == "framings":
-        from attacks.framing_registry import CANDIDATES, VOCABULARY, dedupe, validate
+        from attacks.framing_registry import CANDIDATES, BASELINES, VOCABULARY, dedupe, validate
         validate()
         names, dropped = dedupe(dedupe_threshold)
         for n, kept, r in dropped:
             print(f"[dedupe] dropped {n} ~ {kept} ({r:.3f})")
-        fns = {n: CANDIDATES[n].fn for n in names}
+        if only:
+            unknown = [n for n in only
+                       if n not in CANDIDATES and n not in BASELINES]
+            if unknown:
+                raise SystemExit(f"unknown framing(s): {unknown}")
+            # A baseline is not in the candidate pool, so it never survives
+            # dedupe. Append it when it is asked for, as screen_framings does.
+            names = [n for n in names if n in only] + [n for n in only
+                                                       if n in BASELINES]
+            print(f"[framings] subset requested: {names}")
+        fns = {n: {**CANDIDATES, **BASELINES}[n].fn for n in names}
         meta = {n: {"framing": n,
-                    "framing_source": CANDIDATES[n].source,
-                    "vocabulary": VOCABULARY[n]} for n in names}
+                    "framing_source": {**CANDIDATES, **BASELINES}[n].source,
+                    "vocabulary": VOCABULARY.get(n, "control")} for n in names}
         return ["framing"], fns, meta
 
     if axis == "templates":
@@ -157,7 +168,7 @@ def _axis_items(axis: str, dedupe_threshold: float = 0.90):
         from itertools import product
         from functools import partial
         from run_stage_b import STAGE_B_FRAMINGS, compose_cell
-        from attacks.framing_registry import CANDIDATES, VOCABULARY
+        from attacks.framing_registry import CANDIDATES, BASELINES, VOCABULARY
         from attacks.libra_framings import (
             UTOS_CATEGORIES, UTOS_TOP4, COMPOSITION_ORDERS,
         )
@@ -172,8 +183,8 @@ def _axis_items(axis: str, dedupe_threshold: float = 0.90):
             meta[key] = {
                 "cell": key,
                 "framing": fr,
-                "framing_source": CANDIDATES[fr].source,
-                "vocabulary": VOCABULARY[fr],
+                "framing_source": {**CANDIDATES, **BASELINES}[fr].source,
+                "vocabulary": VOCABULARY.get(fr, "control"),
                 "template": te,
                 "template_category": UTOS_CATEGORIES[te],
                 "composition_order": od,
@@ -189,7 +200,9 @@ def _axis_items(axis: str, dedupe_threshold: float = 0.90):
 def phase_submit(args):
     from attacks.libra_framings import prompt_hash
 
-    labels, fns, extra = _axis_items(args.axis, args.dedupe_threshold)
+    only = [s.strip() for s in args.framings.split(",") if s.strip()] \
+        if getattr(args, "framings", None) else None
+    labels, fns, extra = _axis_items(args.axis, args.dedupe_threshold, only)
 
     split = json.loads(Path(args.split).read_text())
     probe = split["probe"]
@@ -272,6 +285,7 @@ def phase_submit(args):
         "n_instructions": len(probe),
         "n_requests": len(requests),
         "dedupe_threshold": args.dedupe_threshold,
+        "framings_requested": getattr(args, "framings", None),
         "git_commit": git_commit(),
         "submitted_at": datetime.now().isoformat(),
         "batches": batches,
@@ -374,6 +388,7 @@ def phase_fetch(args):
         return
     safe = m["model"].replace(".", "_").replace("-", "_")
     tag = "" if m.get("axis", "framings") == "framings" else f"{m['axis']}_"
+    safe = m["model"].replace(".", "_").replace("-", "_")
     out = OUT_DIR / f"gen_{tag}{safe}.csv"
     df.to_csv(out, index=False)
 
@@ -657,6 +672,8 @@ def main():
     s.add_argument("--dedupe-threshold", type=float, default=0.90)
     s.add_argument("--shard-size", type=int, default=DEFAULT_SHARD)
     s.add_argument("--limit", type=int, default=0)
+    s.add_argument("--framings", default=None,
+                   help="comma-separated subset of framing names; a control from BASELINES may be named here")
     s.set_defaults(func=phase_submit)
 
     s = sub.add_parser("status")

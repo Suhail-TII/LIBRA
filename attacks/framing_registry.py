@@ -8,7 +8,7 @@ Sources
 -------
   attacks/libra_framings.py     8  the exp5 set (defined there, nowhere else)
   attacks/obfuscation_v2.py    18  StructuralObfuscator
-  third_party/l1b3rt4s/        18  L1B3RT4SAttacks (AGPL-3.0, see its NOTICE)
+  attacks/l1b3rt4s_attacks.py  18  L1B3RT4SAttacks
 
 Why this matters: the exp1 notes in obfuscation_v2.py record hypothetical at
 75.7% and multilayer at 75.3% on GPT, against l1b3rt4s_style at 41%. The
@@ -61,7 +61,7 @@ from typing import Callable, Dict, List, NamedTuple, Tuple
 
 from attacks.libra_framings import FRAMINGS as LIBRA_FRAMINGS
 from attacks.obfuscation_v2 import StructuralObfuscator
-from third_party.l1b3rt4s.l1b3rt4s_attacks import L1B3RT4SAttacks, L1B3RT4SConfig
+from attacks.l1b3rt4s_attacks import L1B3RT4SAttacks, L1B3RT4SConfig
 
 
 # ---------------------------------------------------------------------------
@@ -208,6 +208,27 @@ def vocabulary_of(name: str, probe: str = _VOCAB_PROBE) -> str:
 
 
 VOCABULARY: Dict[str, str] = {n: vocabulary_of(n) for n in CANDIDATES}
+
+
+# ---------------------------------------------------------------------------
+# Controls
+#
+# The unadorned instruction: submitted with no framing and no template, so a
+# configuration's attack success can be read against what the bare request
+# already achieves on that target.
+#
+# Deliberately NOT in CANDIDATES. The candidate pool stays at 44, dedupe still
+# drops one to 43, and VOCABULARY above is computed before this point, so no
+# count the paper reports about the pool changes. This is also not a member of
+# the 103-configuration space and must not be added to it: the space is what
+# the search selects among, and "send the instruction unmodified" is the
+# reference the whole space is measured against, not a candidate within it.
+# ---------------------------------------------------------------------------
+BASELINES: Dict[str, Candidate] = {
+    "none": Candidate(lambda instruction: instruction,
+                      "control",
+                      "bare instruction, no framing, no template"),
+}
 
 
 # ---------------------------------------------------------------------------

@@ -38,6 +38,7 @@ import argparse
 import json
 import subprocess
 import sys
+import traceback
 from datetime import datetime
 from pathlib import Path
 from typing import Dict, List, Optional
@@ -47,7 +48,7 @@ from tqdm import tqdm
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
-from attacks.framing_registry import CANDIDATES, dedupe, prompt_hash, validate, VOCABULARY
+from attacks.framing_registry import CANDIDATES, BASELINES, dedupe, prompt_hash, validate, VOCABULARY
 from analysis.metrics import EnsembleEvaluator, EvalLabel, StructuralMetrics
 from utils.checkpoint import CheckpointManager
 
@@ -83,10 +84,16 @@ def select_candidates(dedupe_threshold: float,
         for name, kept, r in dropped:
             print(f"           {name} ~ {kept} ({r:.3f})")
     if only:
-        missing = [n for n in only if n not in CANDIDATES]
+        missing = [n for n in only
+                   if n not in CANDIDATES and n not in BASELINES]
         if missing:
             raise SystemExit(f"unknown framing(s): {missing}")
-        survivors = [n for n in survivors if n in only]
+        # A baseline is not in the candidate pool, so it never appears among
+        # the dedupe survivors. Append it explicitly when it is asked for.
+        asked_baselines = [n for n in only if n in BASELINES]
+        survivors = [n for n in survivors if n in only] + asked_baselines
+        if asked_baselines:
+            print(f"[framings] including control(s): {asked_baselines}")
     print(f"[framings] screening {len(survivors)} candidates")
     return survivors
 
@@ -103,7 +110,7 @@ def git_commit() -> Optional[str]:
 def load_model_by_name(name: str, config_path: Path):
     """Resolve a model by its `name` in models.yaml and load it."""
     import yaml
-    from models.loader import load_model_from_config
+    from master_experiment import load_model_from_config
 
     with open(config_path) as f:
         models = yaml.safe_load(f)["models"]
@@ -161,9 +168,9 @@ def main():
         print("\n[dry-run] rendered prompt lengths:")
         inst = probe[0]["goal"]
         for name in framings:
-            c = CANDIDATES[name]
+            c = {**CANDIDATES, **BASELINES}[name]
             p = c.fn(inst)
-            print(f"  {name:<24} {VOCABULARY[name]:<6} {len(p):>6} chars  "
+            print(f"  {name:<24} {VOCABULARY.get(name, 'control'):<6} {len(p):>6} chars  "
                   f"{prompt_hash(p)[:12]}")
         print("\n[dry-run] no generation performed")
         return
@@ -232,7 +239,7 @@ def main():
     new_rows = []
 
     for name in tqdm(framings, desc="framings"):
-        cand = CANDIDATES[name]
+        cand = {**CANDIDATES, **BASELINES}[name]
 
         for row in tqdm(probe, desc=f"  {name}", leave=False):
             idx = row["instruction_id"]
@@ -290,7 +297,7 @@ def main():
                 "model":            args.model,
                 "framing":          name,
                 "framing_source":   cand.source,
-                "vocabulary":       VOCABULARY[name],
+                "vocabulary":       VOCABULARY.get(name, "control"),
                 "prompt_hash":      prompt_hash(prompt),
                 "prompt_length":    len(prompt.split()),
                 "complexity":       complexity,
