@@ -1,0 +1,1241 @@
+{
+  "seeds": 200,
+  "budgets": [
+    120,
+    240,
+    360,
+    480,
+    720,
+    960
+  ],
+  "targets": [
+    "Llama-2-7B-Chat",
+    "Llama-3.1-8B-Instruct",
+    "Qwen3-14B",
+    "Ministral-3-8B-Instruct"
+  ],
+  "n_instructions": 340,
+  "n_configurations": 103,
+  "gate": {
+    "source": "results/per_seed_regrets.csv",
+    "budgets": [
+      240,
+      960
+    ],
+    "tolerance_points": 0.01,
+    "methods": [
+      "LIBRA",
+      "full_space_halving",
+      "random",
+      "singles_sweep",
+      "ucb"
+    ]
+  },
+  "heldout_mean_regret": {
+    "LIBRA": {
+      "120": 18.3607,
+      "240": 6.1669,
+      "360": 5.9349,
+      "480": 3.8235,
+      "720": 3.15,
+      "960": 3.0963
+    },
+    "full_space_halving": {
+      "120": 41.486,
+      "240": 9.429,
+      "360": 5.7849,
+      "480": 4.8404,
+      "720": 4.0463,
+      "960": 3.8173
+    },
+    "random": {
+      "120": 34.5493,
+      "240": 26.1658,
+      "360": 21.3176,
+      "480": 17.7511,
+      "720": 13.5607,
+      "960": 9.5449
+    },
+    "singles_sweep": {
+      "120": 11.5621,
+      "240": 8.404,
+      "360": 7.4415,
+      "480": 7.0735,
+      "720": 6.5798,
+      "960": 6.4386
+    },
+    "transfer": {
+      "120": 29.704,
+      "240": 30.6085,
+      "360": 32.839,
+      "480": 31.254,
+      "720": 31.9743,
+      "960": 30.339
+    },
+    "ucb": {
+      "120": 36.1849,
+      "240": 21.3276,
+      "360": 14.7085,
+      "480": 9.9261,
+      "720": 6.2283,
+      "960": 4.7412
+    }
+  },
+  "libra_vs_halving": [
+    {
+      "budget": 120,
+      "diff": 23.125367647058823,
+      "se": 0.7206687273501408,
+      "t": 32.08876251934717,
+      "p_raw": 1.3376288293100782e-80,
+      "p_holm": 8.02577297586047e-80
+    },
+    {
+      "budget": 240,
+      "diff": 3.262132352941176,
+      "se": 0.3558062844767151,
+      "t": 9.1682819985566,
+      "p_raw": 6.09552092400965e-17,
+      "p_holm": 3.047760462004825e-16
+    },
+    {
+      "budget": 360,
+      "diff": -0.1500000000000005,
+      "se": 0.3149120066113435,
+      "t": -0.47632353435519126,
+      "p_raw": 0.6343664578707762,
+      "p_holm": 0.6343664578707762
+    },
+    {
+      "budget": 480,
+      "diff": 1.0169117647058816,
+      "se": 0.28276479559256706,
+      "t": 3.596316728802193,
+      "p_raw": 0.0004071062788900949,
+      "p_holm": 0.0016284251155603796
+    },
+    {
+      "budget": 720,
+      "diff": 0.8963235294117641,
+      "se": 0.276787400593923,
+      "t": 3.2383104414740593,
+      "p_raw": 0.0014088676371469219,
+      "p_holm": 0.004226602911440766
+    },
+    {
+      "budget": 960,
+      "diff": 0.7209558823529406,
+      "se": 0.26161835006328393,
+      "t": 2.755754258745786,
+      "p_raw": 0.006399515241058786,
+      "p_holm": 0.012799030482117573
+    }
+  ],
+  "matched": {
+    "probe_four_targets": {
+      "LIBRA": {
+        "120": 18.4868,
+        "240": 6.0486,
+        "360": 5.3771,
+        "480": 3.3556,
+        "720": 2.6118,
+        "960": 2.2521
+      },
+      "full_space_halving": {
+        "120": 47.516,
+        "240": 8.5194,
+        "360": 5.3125,
+        "480": 3.9674,
+        "720": 3.1625,
+        "960": 2.8174
+      },
+      "random": {
+        "120": 38.2542,
+        "240": 30.0125,
+        "360": 24.5125,
+        "480": 20.1799,
+        "720": 14.7556,
+        "960": 10.4944
+      },
+      "singles_sweep": {
+        "120": 9.4785,
+        "240": 7.5674,
+        "360": 6.8563,
+        "480": 6.2014,
+        "720": 5.9542,
+        "960": 5.5667
+      },
+      "transfer": {
+        "120": 36.0028,
+        "240": 36.6194,
+        "360": 38.5,
+        "480": 36.975,
+        "720": 37.2333,
+        "960": 36.3722
+      },
+      "ucb": {
+        "120": 40.1076,
+        "240": 22.1403,
+        "360": 13.6604,
+        "480": 9.8451,
+        "720": 6.2299,
+        "960": 4.6667
+      }
+    },
+    "libra_vs_halving_probe_four": [
+      {
+        "budget": 120,
+        "t": 41.518555410187645,
+        "p_raw": 5.755647365435796e-100,
+        "diff": 29.029166666666665,
+        "p_holm": 3.4533884192614777e-99
+      },
+      {
+        "budget": 240,
+        "t": 7.3971057045041375,
+        "p_raw": 3.8072951027932356e-12,
+        "diff": 2.470833333333333,
+        "p_holm": 1.903647551396618e-11
+      },
+      {
+        "budget": 360,
+        "t": -0.23371744826828322,
+        "p_raw": 0.8154445939785944,
+        "diff": -0.06458333333333334,
+        "p_holm": 0.8154445939785944
+      },
+      {
+        "budget": 480,
+        "t": 2.5375366027996074,
+        "p_raw": 0.011929947882096852,
+        "diff": 0.6118055555555554,
+        "p_holm": 0.03483434309447911
+      },
+      {
+        "budget": 720,
+        "t": 2.547307931747106,
+        "p_raw": 0.011611447698159704,
+        "diff": 0.5506944444444446,
+        "p_holm": 0.03483434309447911
+      },
+      {
+        "budget": 960,
+        "t": 2.6840741005460504,
+        "p_raw": 0.007885890916364189,
+        "diff": 0.565277777777778,
+        "p_holm": 0.031543563665456756
+      }
+    ]
+  },
+  "per_target": [
+    {
+      "grid": "heldout",
+      "model": "Llama-2-7B-Chat",
+      "method": "LIBRA",
+      "budget": 120,
+      "regret": 17.758823529411764
+    },
+    {
+      "grid": "heldout",
+      "model": "Llama-2-7B-Chat",
+      "method": "full_space_halving",
+      "budget": 120,
+      "regret": 25.83529411764706
+    },
+    {
+      "grid": "heldout",
+      "model": "Llama-2-7B-Chat",
+      "method": "random",
+      "budget": 120,
+      "regret": 18.16029411764706
+    },
+    {
+      "grid": "heldout",
+      "model": "Llama-2-7B-Chat",
+      "method": "singles_sweep",
+      "budget": 120,
+      "regret": 25.89264705882353
+    },
+    {
+      "grid": "heldout",
+      "model": "Llama-2-7B-Chat",
+      "method": "ucb",
+      "budget": 120,
+      "regret": 19.73970588235294
+    },
+    {
+      "grid": "heldout",
+      "model": "Llama-2-7B-Chat",
+      "method": "transfer",
+      "budget": 120,
+      "regret": 35.2014705882353
+    },
+    {
+      "grid": "heldout",
+      "model": "Llama-2-7B-Chat",
+      "method": "LIBRA",
+      "budget": 240,
+      "regret": 8.191176470588236
+    },
+    {
+      "grid": "heldout",
+      "model": "Llama-2-7B-Chat",
+      "method": "full_space_halving",
+      "budget": 240,
+      "regret": 16.816176470588236
+    },
+    {
+      "grid": "heldout",
+      "model": "Llama-2-7B-Chat",
+      "method": "random",
+      "budget": 240,
+      "regret": 15.744117647058824
+    },
+    {
+      "grid": "heldout",
+      "model": "Llama-2-7B-Chat",
+      "method": "singles_sweep",
+      "budget": 240,
+      "regret": 23.405882352941177
+    },
+    {
+      "grid": "heldout",
+      "model": "Llama-2-7B-Chat",
+      "method": "ucb",
+      "budget": 240,
+      "regret": 13.192647058823527
+    },
+    {
+      "grid": "heldout",
+      "model": "Llama-2-7B-Chat",
+      "method": "transfer",
+      "budget": 240,
+      "regret": 35.19264705882354
+    },
+    {
+      "grid": "heldout",
+      "model": "Llama-2-7B-Chat",
+      "method": "LIBRA",
+      "budget": 360,
+      "regret": 7.811764705882354
+    },
+    {
+      "grid": "heldout",
+      "model": "Llama-2-7B-Chat",
+      "method": "full_space_halving",
+      "budget": 360,
+      "regret": 14.101470588235292
+    },
+    {
+      "grid": "heldout",
+      "model": "Llama-2-7B-Chat",
+      "method": "random",
+      "budget": 360,
+      "regret": 12.969117647058825
+    },
+    {
+      "grid": "heldout",
+      "model": "Llama-2-7B-Chat",
+      "method": "singles_sweep",
+      "budget": 360,
+      "regret": 21.886764705882353
+    },
+    {
+      "grid": "heldout",
+      "model": "Llama-2-7B-Chat",
+      "method": "ucb",
+      "budget": 360,
+      "regret": 12.545588235294117
+    },
+    {
+      "grid": "heldout",
+      "model": "Llama-2-7B-Chat",
+      "method": "transfer",
+      "budget": 360,
+      "regret": 35.19411764705883
+    },
+    {
+      "grid": "heldout",
+      "model": "Llama-2-7B-Chat",
+      "method": "LIBRA",
+      "budget": 480,
+      "regret": 3.754411764705883
+    },
+    {
+      "grid": "heldout",
+      "model": "Llama-2-7B-Chat",
+      "method": "full_space_halving",
+      "budget": 480,
+      "regret": 13.44411764705882
+    },
+    {
+      "grid": "heldout",
+      "model": "Llama-2-7B-Chat",
+      "method": "random",
+      "budget": 480,
+      "regret": 11.698529411764707
+    },
+    {
+      "grid": "heldout",
+      "model": "Llama-2-7B-Chat",
+      "method": "singles_sweep",
+      "budget": 480,
+      "regret": 21.620588235294118
+    },
+    {
+      "grid": "heldout",
+      "model": "Llama-2-7B-Chat",
+      "method": "ucb",
+      "budget": 480,
+      "regret": 11.292647058823526
+    },
+    {
+      "grid": "heldout",
+      "model": "Llama-2-7B-Chat",
+      "method": "transfer",
+      "budget": 480,
+      "regret": 35.18088235294118
+    },
+    {
+      "grid": "heldout",
+      "model": "Llama-2-7B-Chat",
+      "method": "LIBRA",
+      "budget": 720,
+      "regret": 3.6323529411764706
+    },
+    {
+      "grid": "heldout",
+      "model": "Llama-2-7B-Chat",
+      "method": "full_space_halving",
+      "budget": 720,
+      "regret": 12.89264705882353
+    },
+    {
+      "grid": "heldout",
+      "model": "Llama-2-7B-Chat",
+      "method": "random",
+      "budget": 720,
+      "regret": 10.991176470588234
+    },
+    {
+      "grid": "heldout",
+      "model": "Llama-2-7B-Chat",
+      "method": "singles_sweep",
+      "budget": 720,
+      "regret": 20.75441176470588
+    },
+    {
+      "grid": "heldout",
+      "model": "Llama-2-7B-Chat",
+      "method": "ucb",
+      "budget": 720,
+      "regret": 8.223529411764707
+    },
+    {
+      "grid": "heldout",
+      "model": "Llama-2-7B-Chat",
+      "method": "transfer",
+      "budget": 720,
+      "regret": 35.15882352941177
+    },
+    {
+      "grid": "heldout",
+      "model": "Llama-2-7B-Chat",
+      "method": "LIBRA",
+      "budget": 960,
+      "regret": 3.2500000000000004
+    },
+    {
+      "grid": "heldout",
+      "model": "Llama-2-7B-Chat",
+      "method": "full_space_halving",
+      "budget": 960,
+      "regret": 13.352941176470585
+    },
+    {
+      "grid": "heldout",
+      "model": "Llama-2-7B-Chat",
+      "method": "random",
+      "budget": 960,
+      "regret": 8.757352941176471
+    },
+    {
+      "grid": "heldout",
+      "model": "Llama-2-7B-Chat",
+      "method": "singles_sweep",
+      "budget": 960,
+      "regret": 20.510294117647053
+    },
+    {
+      "grid": "heldout",
+      "model": "Llama-2-7B-Chat",
+      "method": "ucb",
+      "budget": 960,
+      "regret": 7.6
+    },
+    {
+      "grid": "heldout",
+      "model": "Llama-2-7B-Chat",
+      "method": "transfer",
+      "budget": 960,
+      "regret": 35.191176470588246
+    },
+    {
+      "grid": "heldout",
+      "model": "Llama-3.1-8B-Instruct",
+      "method": "LIBRA",
+      "budget": 120,
+      "regret": 18.29117647058824
+    },
+    {
+      "grid": "heldout",
+      "model": "Llama-3.1-8B-Instruct",
+      "method": "full_space_halving",
+      "budget": 120,
+      "regret": 43.9
+    },
+    {
+      "grid": "heldout",
+      "model": "Llama-3.1-8B-Instruct",
+      "method": "random",
+      "budget": 120,
+      "regret": 40.78382352941177
+    },
+    {
+      "grid": "heldout",
+      "model": "Llama-3.1-8B-Instruct",
+      "method": "singles_sweep",
+      "budget": 120,
+      "regret": 3.730882352941177
+    },
+    {
+      "grid": "heldout",
+      "model": "Llama-3.1-8B-Instruct",
+      "method": "ucb",
+      "budget": 120,
+      "regret": 30.504411764705882
+    },
+    {
+      "grid": "heldout",
+      "model": "Llama-3.1-8B-Instruct",
+      "method": "transfer",
+      "budget": 120,
+      "regret": 34.35588235294118
+    },
+    {
+      "grid": "heldout",
+      "model": "Llama-3.1-8B-Instruct",
+      "method": "LIBRA",
+      "budget": 240,
+      "regret": 4.836764705882354
+    },
+    {
+      "grid": "heldout",
+      "model": "Llama-3.1-8B-Instruct",
+      "method": "full_space_halving",
+      "budget": 240,
+      "regret": 6.901470588235295
+    },
+    {
+      "grid": "heldout",
+      "model": "Llama-3.1-8B-Instruct",
+      "method": "random",
+      "budget": 240,
+      "regret": 30.635294117647064
+    },
+    {
+      "grid": "heldout",
+      "model": "Llama-3.1-8B-Instruct",
+      "method": "singles_sweep",
+      "budget": 240,
+      "regret": 0.7794117647058825
+    },
+    {
+      "grid": "heldout",
+      "model": "Llama-3.1-8B-Instruct",
+      "method": "ucb",
+      "budget": 240,
+      "regret": 19.458823529411767
+    },
+    {
+      "grid": "heldout",
+      "model": "Llama-3.1-8B-Instruct",
+      "method": "transfer",
+      "budget": 240,
+      "regret": 35.67058823529412
+    },
+    {
+      "grid": "heldout",
+      "model": "Llama-3.1-8B-Instruct",
+      "method": "LIBRA",
+      "budget": 360,
+      "regret": 5.483823529411767
+    },
+    {
+      "grid": "heldout",
+      "model": "Llama-3.1-8B-Instruct",
+      "method": "full_space_halving",
+      "budget": 360,
+      "regret": 3.8617647058823534
+    },
+    {
+      "grid": "heldout",
+      "model": "Llama-3.1-8B-Instruct",
+      "method": "random",
+      "budget": 360,
+      "regret": 25.20441176470588
+    },
+    {
+      "grid": "heldout",
+      "model": "Llama-3.1-8B-Instruct",
+      "method": "singles_sweep",
+      "budget": 360,
+      "regret": 0.33529411764705885
+    },
+    {
+      "grid": "heldout",
+      "model": "Llama-3.1-8B-Instruct",
+      "method": "ucb",
+      "budget": 360,
+      "regret": 14.13529411764706
+    },
+    {
+      "grid": "heldout",
+      "model": "Llama-3.1-8B-Instruct",
+      "method": "transfer",
+      "budget": 360,
+      "regret": 40.826470588235296
+    },
+    {
+      "grid": "heldout",
+      "model": "Llama-3.1-8B-Instruct",
+      "method": "LIBRA",
+      "budget": 480,
+      "regret": 3.4176470588235306
+    },
+    {
+      "grid": "heldout",
+      "model": "Llama-3.1-8B-Instruct",
+      "method": "full_space_halving",
+      "budget": 480,
+      "regret": 2.710294117647059
+    },
+    {
+      "grid": "heldout",
+      "model": "Llama-3.1-8B-Instruct",
+      "method": "random",
+      "budget": 480,
+      "regret": 20.898529411764706
+    },
+    {
+      "grid": "heldout",
+      "model": "Llama-3.1-8B-Instruct",
+      "method": "singles_sweep",
+      "budget": 480,
+      "regret": 0.0
+    },
+    {
+      "grid": "heldout",
+      "model": "Llama-3.1-8B-Instruct",
+      "method": "ucb",
+      "budget": 480,
+      "regret": 10.739705882352943
+    },
+    {
+      "grid": "heldout",
+      "model": "Llama-3.1-8B-Instruct",
+      "method": "transfer",
+      "budget": 480,
+      "regret": 36.15882352941176
+    },
+    {
+      "grid": "heldout",
+      "model": "Llama-3.1-8B-Instruct",
+      "method": "LIBRA",
+      "budget": 720,
+      "regret": 2.500000000000001
+    },
+    {
+      "grid": "heldout",
+      "model": "Llama-3.1-8B-Instruct",
+      "method": "full_space_halving",
+      "budget": 720,
+      "regret": 1.2794117647058827
+    },
+    {
+      "grid": "heldout",
+      "model": "Llama-3.1-8B-Instruct",
+      "method": "random",
+      "budget": 720,
+      "regret": 14.476470588235294
+    },
+    {
+      "grid": "heldout",
+      "model": "Llama-3.1-8B-Instruct",
+      "method": "singles_sweep",
+      "budget": 720,
+      "regret": 0.0
+    },
+    {
+      "grid": "heldout",
+      "model": "Llama-3.1-8B-Instruct",
+      "method": "ucb",
+      "budget": 720,
+      "regret": 6.492647058823532
+    },
+    {
+      "grid": "heldout",
+      "model": "Llama-3.1-8B-Instruct",
+      "method": "transfer",
+      "budget": 720,
+      "regret": 35.96764705882353
+    },
+    {
+      "grid": "heldout",
+      "model": "Llama-3.1-8B-Instruct",
+      "method": "LIBRA",
+      "budget": 960,
+      "regret": 2.800000000000001
+    },
+    {
+      "grid": "heldout",
+      "model": "Llama-3.1-8B-Instruct",
+      "method": "full_space_halving",
+      "budget": 960,
+      "regret": 0.672058823529412
+    },
+    {
+      "grid": "heldout",
+      "model": "Llama-3.1-8B-Instruct",
+      "method": "random",
+      "budget": 960,
+      "regret": 11.088235294117649
+    },
+    {
+      "grid": "heldout",
+      "model": "Llama-3.1-8B-Instruct",
+      "method": "singles_sweep",
+      "budget": 960,
+      "regret": 0.0
+    },
+    {
+      "grid": "heldout",
+      "model": "Llama-3.1-8B-Instruct",
+      "method": "ucb",
+      "budget": 960,
+      "regret": 4.56764705882353
+    },
+    {
+      "grid": "heldout",
+      "model": "Llama-3.1-8B-Instruct",
+      "method": "transfer",
+      "budget": 960,
+      "regret": 34.94117647058823
+    },
+    {
+      "grid": "heldout",
+      "model": "Qwen3-14B",
+      "method": "LIBRA",
+      "budget": 120,
+      "regret": 17.011764705882353
+    },
+    {
+      "grid": "heldout",
+      "model": "Qwen3-14B",
+      "method": "full_space_halving",
+      "budget": 120,
+      "regret": 41.298529411764704
+    },
+    {
+      "grid": "heldout",
+      "model": "Qwen3-14B",
+      "method": "random",
+      "budget": 120,
+      "regret": 36.97941176470588
+    },
+    {
+      "grid": "heldout",
+      "model": "Qwen3-14B",
+      "method": "singles_sweep",
+      "budget": 120,
+      "regret": 4.658823529411762
+    },
+    {
+      "grid": "heldout",
+      "model": "Qwen3-14B",
+      "method": "ucb",
+      "budget": 120,
+      "regret": 41.025
+    },
+    {
+      "grid": "heldout",
+      "model": "Qwen3-14B",
+      "method": "transfer",
+      "budget": 120,
+      "regret": 31.92058823529411
+    },
+    {
+      "grid": "heldout",
+      "model": "Qwen3-14B",
+      "method": "LIBRA",
+      "budget": 240,
+      "regret": 3.260294117647057
+    },
+    {
+      "grid": "heldout",
+      "model": "Qwen3-14B",
+      "method": "full_space_halving",
+      "budget": 240,
+      "regret": 5.380882352941175
+    },
+    {
+      "grid": "heldout",
+      "model": "Qwen3-14B",
+      "method": "random",
+      "budget": 240,
+      "regret": 28.633823529411767
+    },
+    {
+      "grid": "heldout",
+      "model": "Qwen3-14B",
+      "method": "singles_sweep",
+      "budget": 240,
+      "regret": 1.7735294117647036
+    },
+    {
+      "grid": "heldout",
+      "model": "Qwen3-14B",
+      "method": "ucb",
+      "budget": 240,
+      "regret": 21.09117647058823
+    },
+    {
+      "grid": "heldout",
+      "model": "Qwen3-14B",
+      "method": "transfer",
+      "budget": 240,
+      "regret": 34.232352941176465
+    },
+    {
+      "grid": "heldout",
+      "model": "Qwen3-14B",
+      "method": "LIBRA",
+      "budget": 360,
+      "regret": 3.1647058823529393
+    },
+    {
+      "grid": "heldout",
+      "model": "Qwen3-14B",
+      "method": "full_space_halving",
+      "budget": 360,
+      "regret": 1.5705882352941156
+    },
+    {
+      "grid": "heldout",
+      "model": "Qwen3-14B",
+      "method": "random",
+      "budget": 360,
+      "regret": 23.566176470588236
+    },
+    {
+      "grid": "heldout",
+      "model": "Qwen3-14B",
+      "method": "singles_sweep",
+      "budget": 360,
+      "regret": 0.6352941176470566
+    },
+    {
+      "grid": "heldout",
+      "model": "Qwen3-14B",
+      "method": "ucb",
+      "budget": 360,
+      "regret": 13.320588235294116
+    },
+    {
+      "grid": "heldout",
+      "model": "Qwen3-14B",
+      "method": "transfer",
+      "budget": 360,
+      "regret": 35.84705882352941
+    },
+    {
+      "grid": "heldout",
+      "model": "Qwen3-14B",
+      "method": "LIBRA",
+      "budget": 480,
+      "regret": 2.057352941176469
+    },
+    {
+      "grid": "heldout",
+      "model": "Qwen3-14B",
+      "method": "full_space_halving",
+      "budget": 480,
+      "regret": 1.3044117647058804
+    },
+    {
+      "grid": "heldout",
+      "model": "Qwen3-14B",
+      "method": "random",
+      "budget": 480,
+      "regret": 19.066176470588232
+    },
+    {
+      "grid": "heldout",
+      "model": "Qwen3-14B",
+      "method": "singles_sweep",
+      "budget": 480,
+      "regret": 0.7132352941176449
+    },
+    {
+      "grid": "heldout",
+      "model": "Qwen3-14B",
+      "method": "ucb",
+      "budget": 480,
+      "regret": 7.3588235294117625
+    },
+    {
+      "grid": "heldout",
+      "model": "Qwen3-14B",
+      "method": "transfer",
+      "budget": 480,
+      "regret": 36.844117647058816
+    },
+    {
+      "grid": "heldout",
+      "model": "Qwen3-14B",
+      "method": "LIBRA",
+      "budget": 720,
+      "regret": 1.308823529411763
+    },
+    {
+      "grid": "heldout",
+      "model": "Qwen3-14B",
+      "method": "full_space_halving",
+      "budget": 720,
+      "regret": 0.6588235294117629
+    },
+    {
+      "grid": "heldout",
+      "model": "Qwen3-14B",
+      "method": "random",
+      "budget": 720,
+      "regret": 15.497058823529409
+    },
+    {
+      "grid": "heldout",
+      "model": "Qwen3-14B",
+      "method": "singles_sweep",
+      "budget": 720,
+      "regret": 0.5764705882352921
+    },
+    {
+      "grid": "heldout",
+      "model": "Qwen3-14B",
+      "method": "ucb",
+      "budget": 720,
+      "regret": 4.651470588235293
+    },
+    {
+      "grid": "heldout",
+      "model": "Qwen3-14B",
+      "method": "transfer",
+      "budget": 720,
+      "regret": 41.329411764705874
+    },
+    {
+      "grid": "heldout",
+      "model": "Qwen3-14B",
+      "method": "LIBRA",
+      "budget": 960,
+      "regret": 2.1308823529411747
+    },
+    {
+      "grid": "heldout",
+      "model": "Qwen3-14B",
+      "method": "full_space_halving",
+      "budget": 960,
+      "regret": 0.5264705882352925
+    },
+    {
+      "grid": "heldout",
+      "model": "Qwen3-14B",
+      "method": "random",
+      "budget": 960,
+      "regret": 10.00441176470588
+    },
+    {
+      "grid": "heldout",
+      "model": "Qwen3-14B",
+      "method": "singles_sweep",
+      "budget": 960,
+      "regret": 0.5588235294117627
+    },
+    {
+      "grid": "heldout",
+      "model": "Qwen3-14B",
+      "method": "ucb",
+      "budget": 960,
+      "regret": 3.1999999999999984
+    },
+    {
+      "grid": "heldout",
+      "model": "Qwen3-14B",
+      "method": "transfer",
+      "budget": 960,
+      "regret": 34.264705882352935
+    },
+    {
+      "grid": "heldout",
+      "model": "Ministral-3-8B-Instruct",
+      "method": "LIBRA",
+      "budget": 120,
+      "regret": 20.380882352941175
+    },
+    {
+      "grid": "heldout",
+      "model": "Ministral-3-8B-Instruct",
+      "method": "full_space_halving",
+      "budget": 120,
+      "regret": 54.910294117647055
+    },
+    {
+      "grid": "heldout",
+      "model": "Ministral-3-8B-Instruct",
+      "method": "random",
+      "budget": 120,
+      "regret": 42.273529411764706
+    },
+    {
+      "grid": "heldout",
+      "model": "Ministral-3-8B-Instruct",
+      "method": "singles_sweep",
+      "budget": 120,
+      "regret": 11.966176470588234
+    },
+    {
+      "grid": "heldout",
+      "model": "Ministral-3-8B-Instruct",
+      "method": "ucb",
+      "budget": 120,
+      "regret": 53.47058823529412
+    },
+    {
+      "grid": "heldout",
+      "model": "Ministral-3-8B-Instruct",
+      "method": "transfer",
+      "budget": 120,
+      "regret": 17.33823529411765
+    },
+    {
+      "grid": "heldout",
+      "model": "Ministral-3-8B-Instruct",
+      "method": "LIBRA",
+      "budget": 240,
+      "regret": 8.379411764705885
+    },
+    {
+      "grid": "heldout",
+      "model": "Ministral-3-8B-Instruct",
+      "method": "full_space_halving",
+      "budget": 240,
+      "regret": 8.61764705882353
+    },
+    {
+      "grid": "heldout",
+      "model": "Ministral-3-8B-Instruct",
+      "method": "random",
+      "budget": 240,
+      "regret": 29.65
+    },
+    {
+      "grid": "heldout",
+      "model": "Ministral-3-8B-Instruct",
+      "method": "singles_sweep",
+      "budget": 240,
+      "regret": 7.657352941176472
+    },
+    {
+      "grid": "heldout",
+      "model": "Ministral-3-8B-Instruct",
+      "method": "ucb",
+      "budget": 240,
+      "regret": 31.567647058823532
+    },
+    {
+      "grid": "heldout",
+      "model": "Ministral-3-8B-Instruct",
+      "method": "transfer",
+      "budget": 240,
+      "regret": 17.338235294117652
+    },
+    {
+      "grid": "heldout",
+      "model": "Ministral-3-8B-Instruct",
+      "method": "LIBRA",
+      "budget": 360,
+      "regret": 7.279411764705885
+    },
+    {
+      "grid": "heldout",
+      "model": "Ministral-3-8B-Instruct",
+      "method": "full_space_halving",
+      "budget": 360,
+      "regret": 3.605882352941177
+    },
+    {
+      "grid": "heldout",
+      "model": "Ministral-3-8B-Instruct",
+      "method": "random",
+      "budget": 360,
+      "regret": 23.530882352941177
+    },
+    {
+      "grid": "heldout",
+      "model": "Ministral-3-8B-Instruct",
+      "method": "singles_sweep",
+      "budget": 360,
+      "regret": 6.908823529411766
+    },
+    {
+      "grid": "heldout",
+      "model": "Ministral-3-8B-Instruct",
+      "method": "ucb",
+      "budget": 360,
+      "regret": 18.83235294117647
+    },
+    {
+      "grid": "heldout",
+      "model": "Ministral-3-8B-Instruct",
+      "method": "transfer",
+      "budget": 360,
+      "regret": 19.488235294117647
+    },
+    {
+      "grid": "heldout",
+      "model": "Ministral-3-8B-Instruct",
+      "method": "LIBRA",
+      "budget": 480,
+      "regret": 6.064705882352944
+    },
+    {
+      "grid": "heldout",
+      "model": "Ministral-3-8B-Instruct",
+      "method": "full_space_halving",
+      "budget": 480,
+      "regret": 1.9029411764705884
+    },
+    {
+      "grid": "heldout",
+      "model": "Ministral-3-8B-Instruct",
+      "method": "random",
+      "budget": 480,
+      "regret": 19.341176470588234
+    },
+    {
+      "grid": "heldout",
+      "model": "Ministral-3-8B-Instruct",
+      "method": "singles_sweep",
+      "budget": 480,
+      "regret": 5.960294117647061
+    },
+    {
+      "grid": "heldout",
+      "model": "Ministral-3-8B-Instruct",
+      "method": "ucb",
+      "budget": 480,
+      "regret": 10.313235294117648
+    },
+    {
+      "grid": "heldout",
+      "model": "Ministral-3-8B-Instruct",
+      "method": "transfer",
+      "budget": 480,
+      "regret": 16.832352941176474
+    },
+    {
+      "grid": "heldout",
+      "model": "Ministral-3-8B-Instruct",
+      "method": "LIBRA",
+      "budget": 720,
+      "regret": 5.158823529411766
+    },
+    {
+      "grid": "heldout",
+      "model": "Ministral-3-8B-Instruct",
+      "method": "full_space_halving",
+      "budget": 720,
+      "regret": 1.3544117647058824
+    },
+    {
+      "grid": "heldout",
+      "model": "Ministral-3-8B-Instruct",
+      "method": "random",
+      "budget": 720,
+      "regret": 13.27794117647059
+    },
+    {
+      "grid": "heldout",
+      "model": "Ministral-3-8B-Instruct",
+      "method": "singles_sweep",
+      "budget": 720,
+      "regret": 4.988235294117647
+    },
+    {
+      "grid": "heldout",
+      "model": "Ministral-3-8B-Instruct",
+      "method": "ucb",
+      "budget": 720,
+      "regret": 5.54558823529412
+    },
+    {
+      "grid": "heldout",
+      "model": "Ministral-3-8B-Instruct",
+      "method": "transfer",
+      "budget": 720,
+      "regret": 15.441176470588239
+    },
+    {
+      "grid": "heldout",
+      "model": "Ministral-3-8B-Instruct",
+      "method": "LIBRA",
+      "budget": 960,
+      "regret": 4.204411764705884
+    },
+    {
+      "grid": "heldout",
+      "model": "Ministral-3-8B-Instruct",
+      "method": "full_space_halving",
+      "budget": 960,
+      "regret": 0.7176470588235295
+    },
+    {
+      "grid": "heldout",
+      "model": "Ministral-3-8B-Instruct",
+      "method": "random",
+      "budget": 960,
+      "regret": 8.329411764705883
+    },
+    {
+      "grid": "heldout",
+      "model": "Ministral-3-8B-Instruct",
+      "method": "singles_sweep",
+      "budget": 960,
+      "regret": 4.685294117647058
+    },
+    {
+      "grid": "heldout",
+      "model": "Ministral-3-8B-Instruct",
+      "method": "ucb",
+      "budget": 960,
+      "regret": 3.5970588235294123
+    },
+    {
+      "grid": "heldout",
+      "model": "Ministral-3-8B-Instruct",
+      "method": "transfer",
+      "budget": 960,
+      "regret": 16.958823529411767
+    }
+  ],
+  "scope": "four open-weight targets; the API-served target has no held-out grid. The screen and component pools were fixed on probe data."
+}

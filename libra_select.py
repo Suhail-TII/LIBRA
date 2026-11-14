@@ -612,11 +612,16 @@ def lomo(df: pd.DataFrame, budgets: Sequence[int], seeds: int, hp: Hyper,
 
 def sensitivity(df: pd.DataFrame, budget: int, seeds: int) -> pd.DataFrame:
     """
-    Show the result does not depend on the hyperparameters.
+    Measure how much the fixed hyperparameters cost.
 
-    They are FIXED A PRIORI rather than tuned -- there is no nested
-    cross-validation to defend, and demonstrating stability across the range is
-    a stronger position than reporting a tuned optimum.
+    They are FIXED A PRIORI, not tuned: there is no nested cross-validation to
+    defend. They are also not the best values in the swept range. Some setting
+    beats rho=0.7, n_r=4 at four of the seven budgets after Holm adjustment
+    (Section V-E), and at 960 queries rho=0.5 reaches 1.13 points against 2.29
+    while spending fewer unique queries, 828 against 960. We report that
+    instead of adopting the better settings, because re-tuning on the same five
+    targets the paper evaluates would make the reported regret a tuned
+    quantity.
     """
     rows = []
     for k_screen in (11, 22, 33):

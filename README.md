@@ -1,5 +1,10 @@
 # LIBRA — query-efficient jailbreak configuration search
 
+LIBRA is **Layered Instruction Bracketing with Reordered Assembly**: a harmful
+instruction wrapped in a semantic framing and a structural template, in either
+composition order. LIBRA-S is the budgeted search that finds which wrapping
+works on a given target.
+
 Code and data for *No Recipe Transfers: Query-Efficient Search for
 Target-Specific Jailbreak Configurations*.
 
@@ -51,8 +56,25 @@ Alongside it:
 
 - `results/judge_cache.parquet` — per-response classifier verdicts across all
   128,414 scored responses, supporting the evaluator analysis in Section IV-D.
-- `results/eval_half_cache.parquet` — the selected configurations measured on
-  the held-out 340-instruction evaluation half.
+- `results/eval_half_cache.parquet` — each target's ten highest-scoring probe
+  configurations measured on the held-out 340-instruction evaluation half
+  (13,600 rows). Superseded for Section IV-D by the full grid below, and kept
+  because earlier results reference it.
+- `results/eval_half/heldout_103.csv` — the full held-out comparison: all 103
+  configurations on all 340 evaluation instructions, for the four open-weight
+  targets. Four summary rows; `analyse_eval_half.py` derives them. The
+  per-cell outcomes behind them are not released, by the same rule that
+  governs the raw generations.
+- `results/heldout_replay/heldout_replay.json` — Section V-D: the selector and
+  all five baselines replayed on those 340 held-out instructions, with the
+  matched probe comparison over the same four targets.
+- `results/boot_search/boot_search.json` — the instruction bootstrap of
+  Section V-C: percentile intervals for the LIBRA-S advantage at each budget,
+  resampling the 180 probe instructions with replacement and re-selecting the
+  configuration inside every resample.
+- `results/rho_nr_sweep/rho_nr_sweep.json` — the allocation sweep of
+  Section V-E: per-budget means, standard errors and Holm-adjusted p-values
+  over the screening fraction and the race's starting replication.
 - `results/provider_filter_rejections.json` — the 13 provider-side content
   filter rejections discussed in Section IV-D, with request bodies and provider
   request IDs omitted.
@@ -92,6 +114,10 @@ python libra_select.py --lomo --budgets 120,240,360,480,720,960 --seeds 200
 python reviewer_analyses.py --boot 2000 --seeds 200         # Section V
 python table6_paired.py --seeds 200                         # Table 6
 python run_eval_half.py --analyse                           # probe/eval check
+python analyse_eval_half.py                                 # Section IV-D
+python heldout_replay.py --seeds 200 --matched              # Section V-D
+python bootstrap_search.py --boot 2000 --seeds 200          # Section V-C
+python sweep_rho_nr.py --check                              # Section V-E anchor
 python make_figures.py --outdir figures                     # Figures 2 and 3
 python make_tables.py                                       # Tables 5 and 6
 python check_manuscript_numbers.py --tex Chapters --results results
@@ -104,6 +130,10 @@ python check_manuscript_numbers.py --tex Chapters --results results
 | `reviewer_analyses.py` | `results/per_seed_regrets.csv`, the baselines, the additive diagnostics of Section V-E, bootstrap CIs |
 | `table6_paired.py` | `results/table6_*`; the screening-size sweep with Holm-adjusted paired tests |
 | `run_eval_half.py --analyse` | probe vs held-out evaluation comparison |
+| `analyse_eval_half.py` | `results/eval_half/heldout_103.csv`; the full 103-configuration held-out comparison |
+| `heldout_replay.py` | `results/heldout_replay/heldout_replay.json`; the selector and all five baselines on held-out instructions |
+| `bootstrap_search.py` | `results/boot_search/boot_search.json`; instruction-bootstrap and out-of-bag intervals |
+| `sweep_rho_nr.py` | `results/rho_nr_sweep/rho_nr_sweep.json`; the allocation sweep |
 | `make_figures.py` | `figures/fig_heatmap.pdf` (Figure 2), `figures/fig_regret.pdf` (Figure 3) |
 | `make_tables.py` | `tables/table5.tex`, `tables/table6.tex`, **and the 99-value reference check** |
 | `check_manuscript_numbers.py` | checks the manuscript's own numbers against `results/` |
@@ -198,6 +228,72 @@ at the lower budget they do better, which is consistent with Table 6.
 
 ---
 
+## Robustness checks
+
+Five checks sit behind Sections IV-D, V-C, V-D and V-E. Each is a script plus a
+result file, and each is reported as it came out rather than as we would have
+liked it.
+
+**Which baseline is which.** Before anything else: `libra_select.bl_race_only`
+is **not** the full-space halving baseline the paper reports. It appears in
+`results/per_seed_regrets.csv` as `race_only_legacy` and races a random
+power-of-two subset of the space. Section V's baseline is
+`full_space_halving.bl_successive_halving`, which races every configuration and
+reallocates the remaining budget across the remaining rounds. At 960 queries on
+Llama-3.1 the two give 5.58 and 0.23 points, so confusing them changes every
+comparison. `reviewer_analyses.py` is the harness that wires all five baselines
+correctly, and `heldout_replay.py` checks each of them against the published
+per-seed file before it will produce a number.
+
+**The instruction bootstrap** (`bootstrap_search.py`). The headline comparison
+averages over seeds with the probe half fixed, which answers "would this run
+again" rather than "would this hold on other instructions". The bootstrap
+resamples the 180 probe instructions with replacement and re-selects the
+configuration inside every resample. A 180-draw resample retains about 114
+distinct source instructions, and multiplicities are preserved: the helper
+indexes the outcome matrix by the draw vector and relabels every column, so
+duplicate draws remain separate columns. At 120 queries the advantage is +23.3
+points, percentile interval [18.3, 28.6], positive in 200 of 200 resamples.
+**At 240 queries the interval contains zero** ([-1.8, +3.7]). The seed-level
+paired test at 240 is significant; the instruction-level one is not, and the
+two are reported separately because they resample different units.
+
+**The held-out replay** (`heldout_replay.py`). The whole procedure and all five
+baselines, replayed on the 340 evaluation instructions for the four open-weight
+targets, scored against the held-out optimum. LIBRA-S's regret stays within
+0.84 points of its probe-grid figure at every budget, and the advantage over
+full-space halving is significant at five of six budgets. The exception is 360
+queries, where the difference is -0.15 points on held-out and -0.06 on the
+matched probe grid; an exception that reproduces on an independent instruction
+set is worth reporting as one. The script gates itself against
+`results/per_seed_regrets.csv`, checking all five methods on all five targets
+at two budgets before producing anything, and refuses on any mismatch.
+
+**The allocation sweep** (`sweep_rho_nr.py`). The screening fraction and the
+race's starting replication were fixed a priori rather than tuned. It gates on
+reproducing the published Table 6 anchors (6.427 at 240 queries, 2.286 at 960)
+before sweeping anything. **Some setting beats the fixed values at four of
+seven budgets**; at 960 a screening fraction of 0.5 reaches 1.13 against 2.29
+while spending fewer queries (828 against 960). We report this rather than
+adopting the better settings: re-tuning on the same five targets we evaluate on
+would turn the reported regret into a tuned quantity.
+
+**Winner's curse** (`bootstrap_search.py`). Scoring the selected configuration
+on the same instructions that selected it inflates the estimated transfer gap
+by 1.8 points. Out-of-bag scoring gives 33.3 points, interval [26.6, 39.5]. The
+out-of-bag figure sits slightly above the full-grid 32.6 of the main text; the
+two are different estimators, not a correction of one another, and the
+difference is well inside the interval.
+
+**The held-out grid** (`analyse_eval_half.py`). Selecting on the probe half and
+measuring on the evaluation half costs 0.00, 0.00, 1.18 and 0.00 points across
+the four open-weight targets, mean 0.29. The probe optimum remains optimal on
+three of the four, and per-configuration rankings correlate at Spearman 0.885
+to 0.972. Thirteen configuration-target grids were measured twice during the
+run; all thirteen agree cell-by-cell on `success_strict`.
+
+---
+
 ## Reproduce the measurement (GPU and API access)
 
 Roughly 129,000 generations, each scored by two classifiers. Needs a GPU for the
@@ -265,8 +361,19 @@ sbatch --array=0,1,3 slurm/eval_half.sh
 sbatch --array=4 --export=ALL,CONDA_ENV=libra-mistral slurm/eval_half.sh
 ```
 
-Measures each target's ten highest-scoring probe configurations on all 340
-evaluation instructions, confirming that selection on the probe half transfers.
+The ten-configuration plan above is what produced `eval_half_cache.parquet`.
+The full held-out grid measures **all 103 configurations** on all 340
+evaluation instructions for the four open-weight targets, 140,080
+(configuration, instruction) pairs in total, which is what Sections IV-D and
+V-D report. Check completeness before analysing, since a partial grid
+silently biases the comparison:
+
+```bash
+python check_eval_half.py --root results/eval_half    # refuses unless complete
+python inspect_eval_half.py --root results/eval_half --peek
+python analyse_eval_half.py                           # writes heldout_103.csv
+python heldout_replay.py --seeds 200 --matched        # Section V-D
+```
 
 ### 6. Rebuild the caches
 
@@ -301,6 +408,10 @@ results/
   eval_half_cache.parquet the held-out evaluation half for the selected configs
   per_seed_regrets.csv    every run behind Figure 3 and Table 5
   table6_*.{csv,json}     the screening-size sweep, its tests, its designs
+  eval_half/              held-out grid summary (heldout_103.csv)
+  heldout_replay/         the held-out replay of Section V-D
+  boot_search/            instruction-bootstrap intervals
+  rho_nr_sweep/           allocation sweep, means and Holm-adjusted tests
   evolved_design/         exploratory results, not used in the paper
 
 measurement
@@ -321,6 +432,12 @@ analysis
   coverage_design.py      the screening-design generator
   evolve_design.py        exploratory, not used in the paper
   run_eval_half.py        probe/eval selection and comparison
+  analyse_eval_half.py    the full 103-config held-out comparison
+  heldout_replay.py       the selector and baselines on held-out instructions
+  check_eval_half.py      completeness guard for the held-out grid
+  inspect_eval_half.py    per-file diagnostic for the held-out output
+  bootstrap_search.py     the instruction bootstrap of Section V-C
+  sweep_rho_nr.py         the allocation sweep of Section V-E
   verify_paper_numbers.py cross-checks across the sweeps
   analyse_search_space.py Section IV from the raw CSVs (not released)
 
