@@ -1,0 +1,23 @@
+{
+  "population": {
+    "both_neg": 65025,
+    "lg_only": 24998,
+    "both_pos": 15371,
+    "hb_only": 3012,
+    "uncertain": 1532
+  },
+  "sampled": {
+    "uncertain": 33,
+    "lg_only": 39,
+    "hb_only": 39,
+    "both_pos": 44,
+    "both_neg": 45
+  },
+  "seed": 20261113,
+  "n": 200,
+  "columns": {
+    "lg": "jailbreak_success_llama_guard",
+    "hb": "jailbreak_success_harmbench",
+    "conf": "harmbench_confidence"
+  }
+}

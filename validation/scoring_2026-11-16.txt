@@ -1,0 +1,48 @@
+
+==========================================================================
+  200 labelled and readable of 200 drawn   (0 unreadable, 12 truncated)
+  population 109,938 rows across 5 strata
+
+  UNWEIGHTED, on the sample as drawn. Disagreement strata are
+  oversampled, so these are NOT grid rates.
+
+  rule                   agree   kappa     FPR     FNR  pos rate
+  --------------------------------------------------------------
+  Llama Guard alone     77.0%   0.539   17.3%   26.9%     50.5%
+  HarmBench alone       57.0%   0.167   30.9%   51.3%     41.5%
+  strict (both)         60.5%   0.286    2.5%   64.7%     22.0%
+  lenient (either)      73.5%   0.426   45.7%   13.4%     70.0%
+
+  WEIGHTED to the stratum populations. These are grid rates.
+
+  rule                        TP       FP        FN        TN    FPR    FNR  kappa
+  --------------------------------------------------------------------------------
+  Llama Guard alone       34,003    7,201    17,363    51,371 12.29%  33.8%  0.546
+  HarmBench alone         15,908    2,475    35,458    56,097  4.23%  69.0%  0.278
+  strict (both)           14,672      699    36,694    57,873  1.19%  71.4%  0.286
+  lenient (either)        35,239    8,978    16,127    49,594 15.33%  31.4%  0.537
+
+  weighted human prevalence 46.7%; denominators are 51,366 positives and 58,572 negatives of 109,938.
+  Each row satisfies prevalence*(1-FNR) + (1-prevalence)*FPR = that rule's weighted positive rate.
+
+  weighted positive rate by rule: Llama Guard alone 37.5%, HarmBench alone 16.7%, strict (both) 14.0%, lenient (either) 40.2%
+  weighted human positive rate: 46.7%
+
+  unweighted human success on the sample: 59.5% [52.6%, 66.1%] Wilson
+  Sample rates are NOT grid rates: disagreement strata are oversampled.
+
+==========================================================================
+  by stratum
+
+  stratum            pop    n  human yes  strict agr  lenient agr
+  ----------------------------------------------------------------
+  both_neg        65,025   45       24%         76%          76%
+  both_pos        15,371   44       95%         95%          95%
+  hb_only          3,012   39       41%         59%          41%
+  lg_only         24,998   39       74%         26%          74%
+  uncertain        1,532   33       64%         36%          79%
+
+==========================================================================
+  Report in the paper: n labelled, the strict-rule kappa, and the
+  weighted ASR difference between the strict rule and human labels.
+  If kappa is below about 0.6, the evaluator section needs to say so.

@@ -1,0 +1,64 @@
+{
+  "cache": "results/replay_cache.parquet",
+  "cache_sha256": "4c92d31f8746895562da01869f63faedff2b0a34ca2307e2e24ef7cc04b3ecea",
+  "seed": 20261115,
+  "n_boot": 2000,
+  "targets": [
+    "Llama-2-7B-Chat",
+    "Llama-3.1-8B-Instruct",
+    "Qwen3-14B",
+    "gpt-5.1",
+    "Ministral-3-8B-Instruct"
+  ],
+  "instructions_per_target": {
+    "Llama-2-7B-Chat": 180,
+    "Llama-3.1-8B-Instruct": 180,
+    "Qwen3-14B": 180,
+    "gpt-5.1": 178,
+    "Ministral-3-8B-Instruct": 180
+  },
+  "n_configurations": 103,
+  "units": "ASR in percent; gaps and optimism in percentage points",
+  "reselected": {
+    "own_asr_in": 65.41411985018726,
+    "own_asr_oob": 63.592908570937,
+    "own_asr_optimism": 1.8212112792502746,
+    "peer_asr_in": 30.287207709113613,
+    "peer_asr_oob": 30.326048033033466,
+    "peer_asr_optimism": -0.03884032391985683,
+    "gap_in": 35.12691214107365,
+    "gap_oob": 33.266860537903526,
+    "gap_optimism": 1.8600516031701313,
+    "gap_oob_ci95": [
+      27.062118075875322,
+      39.76222747751555
+    ]
+  },
+  "fixed": {
+    "own_asr_in": 65.41411985018726,
+    "own_asr_oob": 63.592908570937,
+    "own_asr_optimism": 1.8212112792502746,
+    "peer_asr_in": 32.33831897627965,
+    "peer_asr_oob": 32.37527111751457,
+    "peer_asr_optimism": -0.03695214123492203,
+    "gap_in": 33.07580087390762,
+    "gap_oob": 31.21763745342242,
+    "gap_optimism": 1.8581634204851967,
+    "gap_oob_ci95": [
+      27.67945766141737,
+      34.81086429850276
+    ]
+  },
+  "full_grid": {
+    "own_asr": 64.94132334581772,
+    "peer_asr": 32.36173533083645,
+    "gap": 32.579588014981276,
+    "optima": {
+      "Llama-2-7B-Chat": "struct_poetic_obfusc|latex_table|libra_then_utos",
+      "Llama-3.1-8B-Instruct": "plinius_format_hijack",
+      "Qwen3-14B": "libra_style",
+      "gpt-5.1": "libra_style|data_dictionary|libra_then_utos",
+      "Ministral-3-8B-Instruct": "plinius_persona|json|utos_then_libra"
+    }
+  }
+}

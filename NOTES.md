@@ -92,13 +92,17 @@ a bootstrap of the probe instructions that re-picks each target's optimum
 inside every resample, the selected configuration averages 65.4% in-bag and
 63.6% out-of-bag, an inflation of about 1.8 points.
 
-**The transfer gap carries the same inflation**, about 1.8 points, and this
-holds under either donor policy as long as the policy is the same in both
-arms. Reselecting every target's optimum inside each resample, so that the
-donors are also bootstrap selections, gives a gap of 35.1 points scored in-bag
+**The transfer gap carries the same inflation**, about 1.9 points, in both of
+the donor policies we tested, provided the policy is the same in both arms.
+Reselecting every target's optimum inside each resample, so that the donors
+are also bootstrap selections, gives a gap of 35.1 points scored in-bag
 against 33.3 out-of-bag. Holding the donors fixed at their full-grid optima in
 both arms gives 33.1 against 31.2. The level depends on the donor policy; the
-optimism does not.
+optimism was approximately unchanged across the two tested, which is an
+empirical result on this grid and not a general invariance. The reason it
+comes out that way is that within a replicate each donor configuration is
+scored on both partitions, so the peer term carries no selection bias of its
+own (its optimism is -0.04 points under both policies).
 
 An earlier version of this file claimed the gap was insensitive to the
 inflation, at -0.09 points. That was an error: the two arms being compared had
@@ -112,13 +116,27 @@ of these. Under one donor policy the out-of-bag gap lands above it (33.3) and
 under the other below it (31.2), which is itself the reason not to read either
 as a correction of it.
 
-**No released script computes these figures.** `bootstrap_search.py` resamples
-instructions for the search comparison only, and `reviewer_analyses.py`'s
-transfer bootstrap holds each target's optimum fixed outside the resample loop,
-so it is not an out-of-bag estimator. The figures above were computed with a
-standalone driver, cross-checked against an independent implementation at three
-seeds and both donor policies. Values are stated here so that nobody looks for
-them in the code.
+**The driver is `transfer_oob.py`.** It was added after the analysis it
+reports, because the original was ad hoc and is not recoverable:
+
+```bash
+python transfer_oob.py --cache results/replay_cache.parquet \
+    --boot 2000 --seed 20261115 --check
+```
+
+Its output is `results/transfer_oob/transfer_oob.json`, which records the
+cache SHA-256, the seed, both donor policies and the full-grid comparison.
+`--check` gates the result against the values in Section IV-A and exits
+non-zero on a mismatch. `bootstrap_search.py` is a different analysis: it
+resamples instructions for the search comparison only, and
+`reviewer_analyses.py`'s transfer bootstrap holds each target's optimum fixed
+outside the resample loop, so neither is an out-of-bag estimator.
+
+Publishing the driver corrected the interval. Section IV-A previously reported
+a 95% interval of [26.6, 39.5], which came from the lost script and does not
+reproduce: the driver gives [27.1, 39.8] at the published seed and stays
+within a tenth of that across four seeds. The point estimate, 33.3, reproduces
+exactly.
 
 **The held-out grid** (`analyse_eval_half.py`). Selecting on the probe half and
 measuring on the evaluation half costs 0.00, 0.00, 1.18 and 0.00 points across
