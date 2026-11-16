@@ -85,7 +85,8 @@ grid. Two sections therefore cannot be regenerated from this clone; see
 
 - `attacks/`, `models/`, `analysis/` — the framing and template registries, the
   generation wrapper, and the two safety classifiers.
-- `results/` — the released caches and every per-run file behind a table.
+- `results/` — the released caches and the per-run files behind the tables,
+  except the held-out per-cell outcomes noted below.
 - `figures/`, `tables/` — generated output.
 - `slurm/` — site-specific job scripts for the measurement path.
 

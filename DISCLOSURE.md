@@ -34,9 +34,14 @@ costs, and how cheaply a good choice can be found.
 
 - Implementations and full prompt text of all eleven framings and four
   templates. Reproducing the measurements requires them.
-- Per-response classifier labels for every scored response.
-- Replay caches, selection results and the scripts that produce every table
-  and figure in the paper.
+- Per-response classifier labels for every scored response of the probe and
+  screening cohorts, 128,414 responses. The held-out cohort's per-response
+  labels are not included; see below.
+- Replay caches, selection results, and the scripts that produce the paper's
+  tables and figures. Two of those scripts read inputs that are not released,
+  so a clean clone regenerates most tables but not the held-out results of
+  Sections IV-D and V-D. `NOTES.md` names which, and the derived outputs for
+  those two are published instead.
 
 ## What is not released
 

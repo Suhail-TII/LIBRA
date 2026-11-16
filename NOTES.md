@@ -88,22 +88,36 @@ would turn the reported regret into a tuned quantity.
 
 **Winner's curse.** Selecting a configuration on a set of instructions and
 scoring it on those same instructions inflates its measured attack success. On
-a bootstrap of the probe instructions that re-picks the optimum inside each
-resample, the selected configuration averages 65.5% in-bag and 63.5%
-out-of-bag, an inflation of about 2 points.
+a bootstrap of the probe instructions that re-picks each target's optimum
+inside every resample, the selected configuration averages 65.4% in-bag and
+63.6% out-of-bag, an inflation of about 1.8 points.
 
-The **transfer gap is insensitive to this**, because the bias inflates the
-target's own optimum and the peer configurations alike: 33.1 points scoring
-in-bag against 33.2 out-of-bag. Both sit slightly above the full-grid 32.6 of
-the main text, which fixes each target's optimum on the whole grid. These are
-different estimators rather than corrections of one another, and the spread is
-well inside the interval, [27.6, 38.8] out-of-bag.
+**The transfer gap carries the same inflation**, about 1.8 points, and this
+holds under either donor policy as long as the policy is the same in both
+arms. Reselecting every target's optimum inside each resample, so that the
+donors are also bootstrap selections, gives a gap of 35.1 points scored in-bag
+against 33.3 out-of-bag. Holding the donors fixed at their full-grid optima in
+both arms gives 33.1 against 31.2. The level depends on the donor policy; the
+optimism does not.
 
-**No released script computes these two figures.** `bootstrap_search.py`
-resamples instructions for the search comparison only, and
-`reviewer_analyses.py`'s transfer bootstrap holds each target's optimum fixed
-outside the resample loop. The numbers above were computed ad hoc from
-`results/replay_cache.parquet` and are stated here so that nobody looks for
+An earlier version of this file claimed the gap was insensitive to the
+inflation, at -0.09 points. That was an error: the two arms being compared had
+used different donor policies, so the comparison mixed a change of donor
+selection into what was meant to isolate a change of scoring set. It is
+corrected above.
+
+**Do not subtract 1.8 from the 32.6 of the main text.** That figure fixes every
+optimum on the whole grid and is a different estimator, not an in-bag version
+of these. Under one donor policy the out-of-bag gap lands above it (33.3) and
+under the other below it (31.2), which is itself the reason not to read either
+as a correction of it.
+
+**No released script computes these figures.** `bootstrap_search.py` resamples
+instructions for the search comparison only, and `reviewer_analyses.py`'s
+transfer bootstrap holds each target's optimum fixed outside the resample loop,
+so it is not an out-of-bag estimator. The figures above were computed with a
+standalone driver, cross-checked against an independent implementation at three
+seeds and both donor policies. Values are stated here so that nobody looks for
 them in the code.
 
 **The held-out grid** (`analyse_eval_half.py`). Selecting on the probe half and
