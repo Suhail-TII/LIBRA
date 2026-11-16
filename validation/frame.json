@@ -1,0 +1,105 @@
+{
+  "response_column": "full_response",
+  "configuration_column": "cell",
+  "per_model": [
+    {
+      "model": "Llama-2-7B-Chat",
+      "cells": 88,
+      "instructions": 180,
+      "structural": 15840,
+      "raw": 15840,
+      "empty": 0,
+      "frame": 15840,
+      "repeated_keys": 0,
+      "cells_in_frame": 88
+    },
+    {
+      "model": "Llama-3.1-8B-Instruct",
+      "cells": 88,
+      "instructions": 180,
+      "structural": 15840,
+      "raw": 15840,
+      "empty": 0,
+      "frame": 15840,
+      "repeated_keys": 0,
+      "cells_in_frame": 88
+    },
+    {
+      "model": "Ministral-3-8B-Instruct",
+      "cells": 88,
+      "instructions": 180,
+      "structural": 15840,
+      "raw": 15840,
+      "empty": 821,
+      "frame": 15019,
+      "repeated_keys": 0,
+      "cells_in_frame": 87
+    },
+    {
+      "model": "Qwen3-14B",
+      "cells": 88,
+      "instructions": 180,
+      "structural": 15840,
+      "raw": 15840,
+      "empty": 0,
+      "frame": 15840,
+      "repeated_keys": 0,
+      "cells_in_frame": 88
+    },
+    {
+      "model": "gpt-5-mini",
+      "cells": 88,
+      "instructions": 180,
+      "structural": 15840,
+      "raw": 15836,
+      "empty": 0,
+      "frame": 15836,
+      "repeated_keys": 0,
+      "cells_in_frame": 88
+    },
+    {
+      "model": "gpt-5-nano",
+      "cells": 88,
+      "instructions": 180,
+      "structural": 15840,
+      "raw": 15835,
+      "empty": 0,
+      "frame": 15835,
+      "repeated_keys": 0,
+      "cells_in_frame": 88
+    },
+    {
+      "model": "gpt-5.1",
+      "cells": 88,
+      "instructions": 179,
+      "structural": 15752,
+      "raw": 15728,
+      "empty": 0,
+      "frame": 15728,
+      "repeated_keys": 0,
+      "cells_in_frame": 88
+    }
+  ],
+  "empty_detail": {
+    "Ministral-3-8B-Instruct": {
+      "cells_with_empties": 19,
+      "worst": {
+        "plinius_full_openai|data_dictionary|utos_then_libra": 180,
+        "plinius_format_hijack|data_dictionary|utos_then_libra": 168,
+        "plinius_format_hijack|latex_table|libra_then_utos": 143,
+        "plinius_full_openai|latex_table|utos_then_libra": 137,
+        "struct_attention_frag|json|utos_then_libra": 39
+      },
+      "cells_fully_empty": [
+        "plinius_full_openai|data_dictionary|utos_then_libra"
+      ]
+    }
+  },
+  "totals": {
+    "structural": 110792,
+    "raw": 110759,
+    "empty": 821,
+    "frame": 109938,
+    "repeated_keys": 0
+  }
+}

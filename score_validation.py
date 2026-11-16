@@ -42,6 +42,40 @@ def kappa(a, b):
     return float("nan") if pe == 1 else (po - pe) / (1 - pe)
 
 
+def strat_boot(human, pred, strat, pop, n_boot=4000, seed=20261116):
+    """Stratified percentile intervals for the weighted human rate, the rule's
+    weighted rate, and their difference.
+
+    The design is stratified by classifier-agreement cell, so uncertainty is
+    resampled WITHIN each stratum at that stratum's own sample size. The
+    weights are the stratum populations and are treated as known, which they
+    are: they are counts over the frame, not estimates. The human sample size
+    is the 200 labels, never the population total.
+    """
+    rng = np.random.default_rng(seed)
+    N = sum(pop.values())
+    idx = {s: np.flatnonzero(strat == s) for s in pop if (strat == s).any()}
+
+    # Point estimates come from the data, not from the resamples: a bootstrap
+    # mean would differ in the last digit from the weighted table above and
+    # leave two values for one quantity in the same output.
+    h0 = sum(pop[s] / N * human[ix].mean() for s, ix in idx.items())
+    p0 = sum(pop[s] / N * pred[ix].mean() for s, ix in idx.items())
+
+    hw, pw, gap = [], [], []
+    for _ in range(n_boot):
+        h = p = 0.0
+        for s, ix in idx.items():
+            take = rng.choice(ix, size=len(ix), replace=True)
+            w = pop[s] / N
+            h += w * human[take].mean()
+            p += w * pred[take].mean()
+        hw.append(h); pw.append(p); gap.append(h - p)
+    q = lambda v: tuple(np.percentile(v, [2.5, 97.5]) * 100)
+    return (float(h0 * 100), q(hw), float(p0 * 100), q(pw),
+            float((h0 - p0) * 100), q(gap))
+
+
 def wilson(k, n, z=1.96):
     if n == 0:
         return (float("nan"), float("nan"))
@@ -139,9 +173,22 @@ def main() -> int:
     print(f"\n  weighted positive rate by rule: " + ", ".join(
         f"{n} {float((pr * w).sum()):.1%}" for n, pr in rules.items()))
     print(f"  weighted human positive rate: {hw:.1%}")
+
+    strat = m["_stratum"].to_numpy()
+    print(f"\n  STRATIFIED 95% INTERVALS, resampling within each stratum at its")
+    print(f"  own sample size. The human sample is {len(m)} labels, not {N:,}:")
+    print(f"  the population enters only as known weights.\n")
+    print(f"  {'quantity':<36}{'estimate':>10}{'95% interval':>20}")
+    print("  " + "-" * 66)
+    hm, hci, pm, pci, gm, gci = strat_boot(human, rules["strict (both)"], strat, pop)
+    print(f"  {'human weighted compliance':<36}{hm:>9.1f}%{f'[{hci[0]:.1f}, {hci[1]:.1f}]':>20}")
+    print(f"  {'strict rule, weighted rate':<36}{pm:>9.1f}%{f'[{pci[0]:.1f}, {pci[1]:.1f}]':>20}")
+    print(f"  {'gap, human minus strict (points)':<36}{gm:>9.1f} {f'[{gci[0]:.1f}, {gci[1]:.1f}]':>20}")
+
     print(f"\n  unweighted human success on the sample: {human.mean():.1%} "
           f"[{lo:.1%}, {hi:.1%}] Wilson")
-    print("  Sample rates are NOT grid rates: disagreement strata are oversampled.")
+    print("  That Wilson interval describes the sample as drawn. It is NOT an")
+    print("  interval for the weighted estimate; quote the stratified one above.")
 
     print(f"\n{'='*74}\n  by stratum\n")
     print(f"  {'stratum':<12}{'pop':>10}{'n':>5}{'human yes':>11}"

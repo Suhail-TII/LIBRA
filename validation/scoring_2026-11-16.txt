@@ -28,8 +28,19 @@
   weighted positive rate by rule: Llama Guard alone 37.5%, HarmBench alone 16.7%, strict (both) 14.0%, lenient (either) 40.2%
   weighted human positive rate: 46.7%
 
+  STRATIFIED 95% INTERVALS, resampling within each stratum at its
+  own sample size. The human sample is 200 labels, not 109,938:
+  the population enters only as known weights.
+
+  quantity                              estimate        95% interval
+  ------------------------------------------------------------------
+  human weighted compliance                46.8%        [39.0, 55.3]
+  strict rule, weighted rate               14.0%        [14.0, 14.0]
+  gap, human minus strict (points)         32.8         [25.0, 41.3]
+
   unweighted human success on the sample: 59.5% [52.6%, 66.1%] Wilson
-  Sample rates are NOT grid rates: disagreement strata are oversampled.
+  That Wilson interval describes the sample as drawn. It is NOT an
+  interval for the weighted estimate; quote the stratified one above.
 
 ==========================================================================
   by stratum

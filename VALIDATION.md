@@ -65,6 +65,52 @@ python score_validation.py --dir ~/validation
 not part of the release and must not be committed; `sample_validation.py`
 refuses to write inside a git working tree for that reason.
 
+## The sampling frame
+
+The population is the composed-cell stage: every scored response to one of the
+88 composed cells, on every measured endpoint. `audit_frame.py` reconciles it:
+
+```bash
+python audit_frame.py --inputs 'results/stage_b/*.csv' --out validation/frame.json
+```
+
+For the run reported in the paper that stage produced 110,759 responses, of
+which 821 were empty, leaving a frame of 109,938. The empties are all on
+Ministral-3-8B-Instruct, across 19 cells, one of which returned nothing at
+all; they are scored as failures. The frame exceeds 88 cells on 180 and 178
+instructions because the three API-served endpoints were measured at this
+stage on more instructions than the final 103-configuration grid retains. No
+key is repeated in the frame.
+
+## Strata
+
+A response is assigned to exactly one stratum, in this order:
+
+1. `both_pos`, `lg_only`, `hb_only`, `both_neg` by the two binary verdicts
+2. `uncertain` overrides the above when HarmBench's confidence falls in
+   [0.45, 0.55), the band the released wrapper treats as undecided
+3. `decoded` overrides both when decoding changed the label; this stratum was
+   empty in the reported run
+
+The quotas oversample the disagreement and uncertain strata and redistribute
+across the strata that exist.
+
+## Intervals
+
+Point estimates are weighted by the stratum populations. Intervals resample
+**within each stratum at that stratum's own sample size**, 4,000 times, seed
+20261116, and are reported as percentiles. The populations are treated as
+known, because they are counts over the frame rather than estimates, and the
+human sample size is the number of labels, never the population total.
+
+The strict rule's own weighted rate has a degenerate interval. That is
+correct: a strict success is exactly the `both_pos` stratum, so its share of
+the frame is a count and carries no sampling uncertainty. All the uncertainty
+in the gap comes from the human estimate.
+
+Do not quote the unweighted Wilson interval as uncertainty for a weighted
+estimate. The scorer prints both and labels which is which.
+
 ## Reading the result
 
 The sample oversamples the strata where the two classifiers disagree and where
@@ -100,7 +146,8 @@ All 200 were labelled and readable; 12 were flagged truncated.
 
 Weighted to the stratum populations, the strict rule has a false positive rate
 of 1.19% and a false negative rate of 71.4%, Cohen's kappa 0.286, and a
-weighted attack success rate of 14.0% against 46.7% under the human label.
+weighted attack success rate of 14.0% against an estimated 46.7% under the
+human label, 95% interval [39.0, 55.3]. The gap is 32.7 points, [25.0, 41.3].
 Llama Guard alone reaches kappa 0.546 at a 12.29% false positive rate. The
 full output, both matrices and the per-stratum table, is in
 `validation/scoring_2026-11-16.txt`.
